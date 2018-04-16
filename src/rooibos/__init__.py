@@ -4,6 +4,10 @@ import requests
 
 
 class LocationRange(object):
+    """
+    Represents a contiguous range of locations within a given source text as an
+    inclusive range of character positions.
+    """
     pass
 
 
@@ -64,9 +68,73 @@ class Environment(object):
         """
         return self.__bindings.keys().__iter__()
 
+    def __getitem__(self, term: str) -> BoundTerm:
+        """
+        Fetches details of a particular term within this environment.
+
+        Parameters:
+            term: the name of the term.
+
+        Returns:
+            details of the source to which the term was bound.
+
+        Raises:
+            KeyError: if no term is found with the given name.
+        """
+        return self.__bindings[term]
+
 
 class Match(object):
-    pass
+    """
+    Describes a single match of a given template in a source text as a mapping
+    of template terms to snippets of source code.
+    """
+    def __init__(self,
+                 environment: Environment,
+                 location: LocationRange
+                 ) -> None:
+        """
+        Constructs a new match.
+
+        Parameters:
+            environment: an environment that describes the mapping from terms
+                in the match template to snippets within the source text.
+            location: the location range over which the template was matched.
+        """
+        self.__environment = environment
+        self.__location = location
+
+    def __getitem__(self, term: str) -> BoundTerm:
+        """
+        Retrieves a bound term from this match.
+
+        Parameters:
+            term: the name of the term.
+
+        Returns:
+            details of the source code to which the term was bound.
+
+        Raises:
+            KeyError: if there is no term with the given name in the match.
+        """
+        return self.__environment[term]
+
+    @property
+    def environment(self) -> Environment:
+        """
+        The environment that defines the mapping from terms in the match
+        template to snippets in the source code.
+        """
+        return self.__environment
+
+    @property
+    def location(self) -> Location:
+        """
+        The range of locations in the source text over which the template was
+        matched.
+        """
+        return self.__location
+
 
 class Client(object):
     def __init__(self, base_url: str) -> None:
