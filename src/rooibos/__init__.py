@@ -1,4 +1,5 @@
 from typing import Dict, Tuple, Iterator, List
+from urllib.parse import urljoin, urlparse
 
 import requests
 
@@ -137,7 +138,16 @@ class Match(object):
 
 
 class Client(object):
+    """
+    Provides an interface for communicating with a Rooibos server.
+    """
     def __init__(self, base_url: str) -> None:
+        """
+        Constructs a new client.
+
+        Parameters:
+            base_url: the base URL of the Rooibos server.
+        """
         self.__base_url = base_url
 
     @property
@@ -147,9 +157,12 @@ class Client(object):
         """
         return self.__base_url
 
+    def _url(self, path: str) -> str:
+        return urljoin(self.__base_url, path)
+
     def matches(self,
                 source: str,
-                match_template: str
+                template: str
                 ) -> Iterator[Match]:
         """
         Finds all matches of a given template within a provided body of source
@@ -157,12 +170,23 @@ class Client(object):
 
         Parameters:
             source: the body of source code to be searched.
-            match_template: the template that should be used for matching.
+            template: the template that should be used for matching.
 
         Returns:
             an iterator over all of the discovered matches within the source.
         """
-        raise NotImplementedError
+        path = "matches/{}".format(template)
+        url = self._url(path)
+
+        # FIXME
+        response = requests.post(url, data=COOL)
+        jsn_matches = reversed(response.json())
+
+        while jsn_matches != []:
+            jsn_match = jsn_matches.pop()
+            location = LocationRange.from_string(jsn_match['location'])
+            environment = Environment.from_dict(jsn_match['environment'])
+            yield Match(environment, location)
 
     def rewrite(self,
                 source: str,
