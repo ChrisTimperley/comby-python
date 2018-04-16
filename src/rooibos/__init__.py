@@ -1,5 +1,6 @@
 from typing import Dict, Tuple, Iterator, List
 from urllib.parse import urljoin, urlparse
+from tempfile import TemporaryFile
 
 import requests
 
@@ -158,6 +159,7 @@ class Client(object):
         return self.__base_url
 
     def _url(self, path: str) -> str:
+        # FIXME escape characters
         return urljoin(self.__base_url, path)
 
     def matches(self,
@@ -165,21 +167,19 @@ class Client(object):
                 template: str
                 ) -> Iterator[Match]:
         """
-        Finds all matches of a given template within a provided body of source
-        code.
+        Finds all matches of a given template within a source text.
 
         Parameters:
-            source: the body of source code to be searched.
+            source: the source text to be searched.
             template: the template that should be used for matching.
 
         Returns:
-            an iterator over all of the discovered matches within the source.
+            an iterator over all matches in the text.
         """
         path = "matches/{}".format(template)
         url = self._url(path)
 
-        # FIXME
-        response = requests.post(url, data=COOL)
+        response = requests.post(url, data=source)
         jsn_matches = reversed(response.json())
 
         while jsn_matches != []:
