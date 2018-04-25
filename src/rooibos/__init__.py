@@ -315,7 +315,7 @@ class Client(object):
         # FIXME add error handling
         assert response.status_code == 200
 
-        jsn_matches = reversed(response.json())
+        jsn_matches = list(reversed(response.json()))
         while jsn_matches != []:
             yield Match.from_dict(jsn_matches.pop())
 
