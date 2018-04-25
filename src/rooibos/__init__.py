@@ -10,7 +10,6 @@ class LocationRange(object):
     Represents a contiguous range of locations within a given source text as an
     inclusive range of character positions.
     """
-    pass
 
 
 class BoundTerm(object):
@@ -188,9 +187,11 @@ class Client(object):
             environment = Environment.from_dict(jsn_match['environment'])
             yield Match(environment, location)
 
-    def rewrite(self,
-                source: str,
-                match_template: str,
-                rewrite_template: str
-                ) -> str:
+    def substitute(self,
+                   template: str,
+                   args: Dict[str, str]
+                   ) -> str:
+        """
+        Substitutes a given set of terms into a given template.
+        """
         raise NotImplementedError
