@@ -284,7 +284,9 @@ class Client(object):
         return self.__base_url
 
     def _url(self, path: str) -> str:
-        # FIXME escape characters
+        """
+        Computes the URL for a resource located at a given path on the server.
+        """
         return urljoin(self.__base_url, path)
 
     def matches(self,
@@ -301,17 +303,15 @@ class Client(object):
         Returns:
             an iterator over all matches in the text.
         """
-        path = "matches/{}".format(template)
-        url = self._url(path)
-
-        response = requests.post(url, data=source)
+        url = self._url("matches")
+        payload = {
+            'source': source,
+            'template': template
+        }
+        response = requests.get(url, json=payload)
         jsn_matches = reversed(response.json())
-
         while jsn_matches != []:
-            jsn_match = jsn_matches.pop()
-            location = LocationRange.from_string(jsn_match['location'])
-            environment = Environment.from_dict(jsn_match['environment'])
-            yield Match(environment, location)
+            yield Match.from_dict(jsn_matches.pop())
 
     def substitute(self,
                    template: str,
