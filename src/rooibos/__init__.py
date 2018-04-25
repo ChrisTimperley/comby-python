@@ -333,3 +333,30 @@ class Client(object):
         # FIXME add error handling
         assert response.status_code == 200
         return response.text
+
+    def rewrite(self,
+                source: str,
+                match: str,
+                rewrite: str,
+                args: Dict[str, str] = None
+                ) -> str:
+        """
+        Rewrites all matches of a given template in a source text using a
+        provided rewrite template and an optional set of arguments to that
+        rewrite template.
+        """
+        if args is None:
+            args = {}
+
+        url = self._url("rewrite")
+        payload = {
+            'source': source,
+            'match': match,
+            'rewrite': rewrite,
+            'template': template,
+            'arguments': args
+        }
+        response = requests.get(url, json=payload)
+        # FIXME add error handling
+        assert response.status_code == 200
+        return response.text
