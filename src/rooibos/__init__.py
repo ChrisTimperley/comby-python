@@ -4,6 +4,8 @@ from tempfile import TemporaryFile
 
 import requests
 
+from .exceptions import *
+
 __all__ = [
     'Location',
     'LocationRange',
@@ -249,14 +251,30 @@ class Client(object):
     """
     Provides an interface for communicating with a Rooibos server.
     """
-    def __init__(self, base_url: str) -> None:
+    def __init__(self,
+                 base_url: str,
+                 timeout: int = 30,
+                 timeout_connection: int = 30
+                 ) -> None:
         """
         Constructs a new client.
 
         Parameters:
             base_url: the base URL of the Rooibos server.
+            timeout: the maximum number of seconds to wait before terminating
+                an unresponsive API request.
+            timeout_connection: the maximum number of seconds to wait when
+                connecting to the Rooibos server before assuming that a
+                connection failure has occurred.
+
+        Raises:
+            ConnectionFailure: if the client failed to connect to the server
+                within the connection timeout period.
         """
         self.__base_url = base_url
+        self.__timeout = timeout
+
+        # FIXME wait until server is running
 
     @property
     def base_url(self) -> str:
