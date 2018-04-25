@@ -11,7 +11,8 @@ __all__ = [
     'LocationRange',
     'BoundTerm',
     'Environment',
-    'Match'
+    'Match',
+    'Client'
 ]
 
 
