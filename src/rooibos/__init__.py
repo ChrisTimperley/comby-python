@@ -309,6 +309,10 @@ class Client(object):
             'template': template
         }
         response = requests.get(url, json=payload)
+
+        # FIXME add error handling
+        assert response.status_code == 200
+
         jsn_matches = reversed(response.json())
         while jsn_matches != []:
             yield Match.from_dict(jsn_matches.pop())
