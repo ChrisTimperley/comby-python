@@ -8,6 +8,7 @@ __all__ = [
     'Location',
     'LocationRange',
     'BoundTerm',
+    'Environment',
 ]
 
 
@@ -151,10 +152,14 @@ class BoundTerm(object):
 
 
 class Environment(object):
+    @staticmethod
+    def from_dict(d) -> 'Environment':
+        return Environment([BoundTerm.from_dict(bt) for bt in d])
+
     def __init__(self,
-                 bindings: Dict[str, BoundTerm]
+                 bindings: List[BoundTerm]
                  ) -> None:
-        self.__bindings = bindings
+        self.__bindings = {b.term: b for b in bindings}
 
     def __iter__(self) -> Iterator[str]:
         """
