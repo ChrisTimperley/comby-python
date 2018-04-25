@@ -4,6 +4,12 @@ from tempfile import TemporaryFile
 
 import requests
 
+__all__ = [
+    'Location',
+    'LocationRange',
+    'BoundTerm',
+]
+
 
 class Location(object):
     """
@@ -95,6 +101,15 @@ class BoundTerm(object):
     """
     Represents a binding of a named term to a fragment of source code.
     """
+    @staticmethod
+    def from_dict(d: dict) -> 'BoundTerm':
+        """
+        Constructs a bound term from a dictionary-based description.
+        """
+        return BoundTerm(term=d['term'],
+                         location=LocationRange.from_string(d['location']),
+                         fragment=d['content'])
+
     def __init__(self,
                  term: str,
                  location: LocationRange,
