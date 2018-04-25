@@ -5,11 +5,90 @@ from tempfile import TemporaryFile
 import requests
 
 
+class Location(object):
+    """
+    Represents the location of a single character within a source text by its
+    one-indexed line and column numbers.
+    """
+    @staticmethod
+    def from_string(s: str) -> 'Location':
+        s_line, _, s_col = s.partition(":")
+        line = int(s_line)
+        col = int(s_col)
+        return Location(line, col)
+
+    def __init__(self, line: int, col: int) -> None:
+        assert line > 0, "expected one-indexed line number"
+        assert col > 0, "expected one-indexed column number"
+        self.__line = line
+        self.__col = col
+
+    def __str__(self) -> str:
+        """
+        Describes this location as a string of the form `line:col`, where
+        `line and `col` are one-indexed line and column numbers.
+        """
+        return "{}:{}".format(self.line, self.col)
+
+    @property
+    def line(self) -> int:
+        """
+        The one-indexed line number for this location.
+        """
+        return self.__line
+
+    @property
+    def col(self) -> int:
+        """
+        The one-indexed column number for this location.
+        """
+        return self.__col
+
+
 class LocationRange(object):
     """
     Represents a contiguous range of locations within a given source text as an
     inclusive range of character positions.
     """
+    @staticmethod
+    def from_string(s: str) -> 'LocationRange':
+        s_start, _, s_end = s.partition("::")
+        loc_start = Location.from_string(s_start)
+        loc_end = Location.from_string(s_end)
+        return LocationRange(loc_start, loc_end)
+
+    def __init__(self, start: Location, stop: Location) -> None:
+        """
+        Constructs an inclusive location range from a start and stop location.
+
+        Parameters:
+            start: the location at which the range begins.
+            stop: the location at which the range ends (inclusive).
+        """
+        self.__start = start
+        self.__stop = stop
+
+    def __str__(self) -> str:
+        """
+        Describes this location range as a string of the form `start::stop`,
+        where `start` and `stop` are string-based descriptions of the positions
+        of the first and last characters within this source range, respectively.
+        """
+        return "{}::{}".format(self.start, self.stop)
+
+    @property
+    def start(self) -> Location:
+        """
+        The position at which this range begins.
+        """
+        return self.__start
+
+    @property
+    def stop(self) -> Location:
+        """
+        The position at which this range ends, inclusive.
+        """
+        return self.__stop
 
 
 class BoundTerm(object):
