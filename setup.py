@@ -1,10 +1,14 @@
-#!/usr/bin/env python
 from glob import glob
 from setuptools import setup, find_packages
+import os
+
+path = os.path.join(os.path.dirname(__file__), 'src/rooibos/version.py')
+with open(path, 'r') as f:
+    exec(f.read())
 
 setup(
     name='rooibos',
-    version='0.0.1',
+    version=__version__,
     description='Lightweight language-independent syntax rewriting.',
     long_description='TBA',
     author='Chris Timperley, Rijnard van Tonder',

@@ -4,6 +4,7 @@ from tempfile import TemporaryFile
 
 import requests
 
+from .version import __version__
 from .exceptions import *
 
 __all__ = [
