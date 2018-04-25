@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Iterator, List
+from typing import Dict, Tuple, Iterator, List, Any
 from urllib.parse import urljoin, urlparse
 from tempfile import TemporaryFile
 
@@ -9,6 +9,7 @@ __all__ = [
     'LocationRange',
     'BoundTerm',
     'Environment',
+    'Match'
 ]
 
 
@@ -153,7 +154,7 @@ class BoundTerm(object):
 
 class Environment(object):
     @staticmethod
-    def from_dict(d) -> 'Environment':
+    def from_dict(d: Any) -> 'Environment':
         return Environment([BoundTerm.from_dict(bt) for bt in d])
 
     def __init__(self,
@@ -189,6 +190,14 @@ class Match(object):
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
     """
+    @staticmethod
+    def from_dict(d: Any) -> 'Match':
+        """
+        Constructs a match from a dictionary-based description.
+        """
+        return Match(environment=d['environment'],
+                     location=LocationRange.from_string(d['location']))
+
     def __init__(self,
                  environment: Environment,
                  location: LocationRange
