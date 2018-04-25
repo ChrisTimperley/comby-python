@@ -355,7 +355,6 @@ class Client(object):
             'source': source,
             'match': match,
             'rewrite': rewrite,
-            'template': template,
             'arguments': args
         }
         response = requests.get(url, json=payload)
