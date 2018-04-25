@@ -324,4 +324,12 @@ class Client(object):
         """
         Substitutes a given set of terms into a given template.
         """
-        raise NotImplementedError
+        url = self._url("substitute")
+        payload = {
+            'template': template,
+            'arguments': args
+        }
+        response = requests.get(url, json=payload)
+        # FIXME add error handling
+        assert response.status_code == 200
+        return response.text
