@@ -241,7 +241,7 @@ class Match(object):
         return self.__environment
 
     @property
-    def location(self) -> Location:
+    def location(self) -> LocationRange:
         """
         The range of locations in the source text over which the template was
         matched.
