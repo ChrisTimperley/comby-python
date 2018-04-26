@@ -18,9 +18,7 @@ def ephemeral_rooibosd(port: int = 8888) -> None:
                                    # stdout=subprocess.DEVNULL,
                                    # stderr=subprocess.DEVNULL,
                                    preexec_fn=os.setsid)
-        # TODO adding waiting to client constructor
-        time.sleep(5)
-        yield rooibos.Client(url)
+        yield rooibos.Client(url, timeout_connection=30)
     finally:
         try:
             os.killpg(process.pid, signal.SIGTERM)
@@ -30,7 +28,12 @@ def ephemeral_rooibosd(port: int = 8888) -> None:
 
 def test_something():
     with ephemeral_rooibosd() as client:
-        print("nice face")
+        res = client.substitute("x = :[1]", {'1': "1 + 5"})
+        assert res == "x = 1 + 5"
+
+        matches = client.matches("x = foo(bar)", "x = :[1]")
+        for match in matches:
+            print(matches)
 
 
 if __name__ == '__main__':
