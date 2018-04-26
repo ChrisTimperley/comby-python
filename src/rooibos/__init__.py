@@ -310,7 +310,7 @@ class Client(object):
             'source': source,
             'template': template
         }
-        response = requests.get(url, json=payload)
+        response = requests.post(url, json=payload)
 
         # FIXME add error handling
         assert response.status_code == 200
@@ -331,8 +331,10 @@ class Client(object):
             'template': template,
             'arguments': args
         }
-        response = requests.get(url, json=payload)
+        response = requests.post(url, json=payload)
         # FIXME add error handling
+        print(response.status_code)
+        print(response.text)
         assert response.status_code == 200
         return response.text
 
@@ -357,7 +359,7 @@ class Client(object):
             'rewrite': rewrite,
             'arguments': args
         }
-        response = requests.get(url, json=payload)
+        response = requests.post(url, json=payload)
         # FIXME add error handling
         assert response.status_code == 200
         return response.text
