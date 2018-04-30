@@ -389,7 +389,7 @@ class Client(object):
 
 @contextmanager
 def ephemeral_server(*,
-                     port: int = 6060,
+                     port: int = 8888,
                      verbose: bool = False
                      ) -> Iterator[Client]:
     """
