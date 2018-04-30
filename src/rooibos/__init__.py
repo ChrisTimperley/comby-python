@@ -1,8 +1,12 @@
 from typing import Dict, Tuple, Iterator, List, Any
+from contextlib import contextmanager
 from urllib.parse import urljoin, urlparse
 from tempfile import TemporaryFile
 from timeit import default_timer as timer
 import time
+import os
+import subprocess
+import signal
 
 import requests
 
@@ -15,9 +19,9 @@ __all__ = [
     'BoundTerm',
     'Environment',
     'Match',
-    'Client'
+    'Client',
+    'ephemeral_server'
 ]
-
 
 class Location(object):
     """
@@ -381,3 +385,34 @@ class Client(object):
         # FIXME add error handling
         assert response.status_code == 200
         return response.text
+
+
+@contextmanager
+def ephemeral_server(*,
+                     port: int = 6060,
+                     verbose: bool = False
+                     ) -> Iterator[Client]:
+    """
+    Launches an ephemeral server instance that will be immediately
+    close when no longer in context.
+
+    Parameters:
+        port: the port that the server should run on.
+        verbose: if set to True, the server will print its output to the
+            stdout, otherwise it will remain silent.
+
+    Returns:
+        a client for communicating with the server.
+    """
+    url = "http://127.0.0.1:{}".format(port)
+    cmd = ["rooibosd", "-p", str(port)]
+    try:
+        stdout = None if verbose else subprocess.DEVNULL
+        stderr = None if verbose else subprocess.DEVNULL
+        proc = subprocess.Popen(cmd,
+                                preexec_fn=os.setsid,
+                                stdout=stdout,
+                                stderr=stderr)
+        yield Client(url)
+    finally:
+        os.killpg(proc.pid, signal.SIGTERM)
