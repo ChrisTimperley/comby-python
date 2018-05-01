@@ -205,7 +205,7 @@ class Match(object):
         """
         Constructs a match from a dictionary-based description.
         """
-        return Match(environment=d['environment'],
+        return Match(environment=Environment.from_dict(d['environment']),
                      location=LocationRange.from_string(d['location']))
 
     def __init__(self,
