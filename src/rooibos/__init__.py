@@ -118,7 +118,6 @@ class BoundTerm(object):
         """
         Constructs a bound term from a dictionary-based description.
         """
-        print("BOUND TERM: {}".format(d))
         return BoundTerm(term=d['term'],
                          location=LocationRange.from_string(d['location']),
                          fragment=d['content'])
@@ -206,7 +205,6 @@ class Match(object):
         """
         Constructs a match from a dictionary-based description.
         """
-        print("MATCH: {}".format(d))
         return Match(environment=Environment.from_dict(d['environment']),
                      location=LocationRange.from_string(d['location']))
 
@@ -357,8 +355,6 @@ class Client(object):
         }
         response = requests.post(url, json=payload)
         # FIXME add error handling
-        print(response.status_code)
-        print(response.text)
         assert response.status_code == 200
         return response.text
 
