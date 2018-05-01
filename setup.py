@@ -10,7 +10,6 @@ setup(
     name='rooibos',
     version=__version__,
     description='Lightweight language-independent syntax rewriting.',
-    long_description='TBA',
     author='Chris Timperley, Rijnard van Tonder',
     author_email='christimperley@googlemail.com',
     url='https://github.com/squaresLab/rooibos.py',
