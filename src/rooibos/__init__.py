@@ -36,8 +36,8 @@ class Location(object):
         return Location(line, col)
 
     def __init__(self, line: int, col: int) -> None:
-        assert line > 0, "expected one-indexed line number"
-        assert col > 0, "expected one-indexed column number"
+        assert line > 0, "expected one-indexed line number greater than zero"
+        assert col >= 0, "expected one-indexed column number greater or equal to zero"
         self.__line = line
         self.__col = col
 
@@ -118,6 +118,7 @@ class BoundTerm(object):
         """
         Constructs a bound term from a dictionary-based description.
         """
+        print("BOUND TERM: {}".format(d))
         return BoundTerm(term=d['term'],
                          location=LocationRange.from_string(d['location']),
                          fragment=d['content'])
@@ -205,6 +206,7 @@ class Match(object):
         """
         Constructs a match from a dictionary-based description.
         """
+        print("MATCH: {}".format(d))
         return Match(environment=Environment.from_dict(d['environment']),
                      location=LocationRange.from_string(d['location']))
 
