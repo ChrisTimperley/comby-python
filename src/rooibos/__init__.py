@@ -7,6 +7,7 @@ import time
 import os
 import subprocess
 import signal
+import logging
 
 import requests
 
@@ -47,6 +48,9 @@ class Location(object):
         `line and `col` are one-indexed line and column numbers.
         """
         return "{}:{}".format(self.line, self.col)
+
+    def __repr__(self) -> str:
+        return "rooibos.Location({})".format(self.__str__())
 
     @property
     def line(self) -> int:
@@ -94,6 +98,9 @@ class LocationRange(object):
         """
         return "{}::{}".format(self.start, self.stop)
 
+    def __repr__(self) -> str:
+        return "rooibos.LocationRange({})".format(self.__str__())
+
     @property
     def start(self) -> Location:
         """
@@ -139,6 +146,10 @@ class BoundTerm(object):
         self.__location = location
         self.__fragment = fragment
 
+    def __repr__(self) -> str:
+        s = "rooibos.BoundTerm({}, {}, {})"
+        return s.format(self.term, str(self.location), self.fragment)
+
     @property
     def term(self) -> str:
         """
@@ -171,6 +182,11 @@ class Environment(object):
                  bindings: List[BoundTerm]
                  ) -> None:
         self.__bindings = {b.term: b for b in bindings}
+
+    def __repr__(self) -> str:
+        s = "rooibos.Environment([{}])"
+        s = s.format(', '.join([repr(self[t]) for t in self]))
+        return s
 
     def __iter__(self) -> Iterator[str]:
         """
@@ -222,6 +238,11 @@ class Match(object):
         """
         self.__environment = environment
         self.__location = location
+
+    def __repr__(self) -> str:
+        s = "rooibos.Match({}, {})"
+        s = s.format(str(self.__location), repr(self.__environment))
+        return s
 
     def __getitem__(self, term: str) -> BoundTerm:
         """
@@ -281,6 +302,7 @@ class Client(object):
         """
         self.__base_url = base_url
         self.__timeout = timeout
+        self.__logger = logging.getLogger('rooibos')
 
         # attempt to establish a connection
         url = self._url("status")
