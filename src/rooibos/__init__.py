@@ -14,6 +14,8 @@ import requests
 from .version import __version__
 from .exceptions import *
 
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+
 __all__ = [
     'Location',
     'LocationRange',
@@ -302,7 +304,8 @@ class Client(object):
         """
         self.__base_url = base_url
         self.__timeout = timeout
-        self.__logger = logging.getLogger('rooibos')
+        self.__logger = logging.getLogger('rooibos') # type: logging.Logger
+        self.__logger.setLevel(logging.INFO)
 
         # attempt to establish a connection
         url = self._url("status")
@@ -349,6 +352,8 @@ class Client(object):
         Returns:
             an iterator over all matches in the text.
         """
+        logger = self.__logger
+        logger.info("finding matches of template [%s] in source: %s", template, source)
         url = self._url("matches")
         payload = {
             'source': source,
@@ -360,8 +365,15 @@ class Client(object):
         assert response.status_code == 200
 
         jsn_matches = list(reversed(response.json()))
+        num_matches = len(jsn_matches)
+        logger.info("found %d matches of template [%s] in source: %s",
+                    num_matches, template, source)
+        i = 0
         while jsn_matches != []:
-            yield Match.from_dict(jsn_matches.pop())
+            i += 1
+            match = Match.from_dict(jsn_matches.pop())
+            logger.info("* match #%d: %s", i, repr(match))
+            yield match
 
     def substitute(self,
                    template: str,
@@ -370,6 +382,8 @@ class Client(object):
         """
         Substitutes a given set of terms into a given template.
         """
+        logger = self.__logger
+        logger.info("substituting arguments (%s) into template (%s)", repr(args), template)
         url = self._url("substitute")
         payload = {
             'template': template,
@@ -378,6 +392,8 @@ class Client(object):
         response = requests.post(url, json=payload)
         # FIXME add error handling
         assert response.status_code == 200
+        logger.info("substituted arguments (%s) into template (%s): %s",
+                    repr(args), template, response.text)
         return response.text
 
     def rewrite(self,
@@ -391,6 +407,9 @@ class Client(object):
         provided rewrite template and an optional set of arguments to that
         rewrite template.
         """
+        logger = self.__logger
+        logger.info("performing rewriting of source (%s) using match template (%s), rewrite template (%s) and arguments (%s)",
+                    source, match, rewrite, repr(args))
         if args is None:
             args = {}
 
@@ -404,6 +423,7 @@ class Client(object):
         response = requests.post(url, json=payload)
         # FIXME add error handling
         assert response.status_code == 200
+        logger.info("performed source code rewrite:\n%s", response.text)
         return response.text
 
 
