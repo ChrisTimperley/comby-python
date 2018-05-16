@@ -29,7 +29,7 @@ __all__ = [
 class Location(object):
     """
     Represents the location of a single character within a source text by its
-    one-indexed line and column numbers.
+    zero-indexed line and column numbers.
     """
     @staticmethod
     def from_string(s: str) -> 'Location':
@@ -71,8 +71,8 @@ class Location(object):
 
 class LocationRange(object):
     """
-    Represents a contiguous range of locations within a given source text as an
-    inclusive range of character positions.
+    Represents a contiguous range of locations within a given source text as a
+    (non-inclusive) range of character positions.
     """
     @staticmethod
     def from_string(s: str) -> 'LocationRange':
@@ -83,11 +83,12 @@ class LocationRange(object):
 
     def __init__(self, start: Location, stop: Location) -> None:
         """
-        Constructs an inclusive location range from a start and stop location.
+        Constructs a (non-inclusive) location range from a start and stop
+        location.
 
         Parameters:
             start: the location at which the range begins.
-            stop: the location at which the range ends (inclusive).
+            stop: the location at which the range ends (non-inclusive).
         """
         self.__start = start
         self.__stop = stop
