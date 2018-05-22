@@ -447,6 +447,7 @@ def ephemeral_server(*,
     """
     url = "http://127.0.0.1:{}".format(port)
     cmd = ["rooibosd", "-p", str(port)]
+    proc = None
     try:
         stdout = None if verbose else subprocess.DEVNULL
         stderr = None if verbose else subprocess.DEVNULL
@@ -456,4 +457,5 @@ def ephemeral_server(*,
                                 stderr=stderr)
         yield Client(url)
     finally:
-        os.killpg(proc.pid, signal.SIGTERM)
+        if proc:
+            os.killpg(proc.pid, signal.SIGTERM)
