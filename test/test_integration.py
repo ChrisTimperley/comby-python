@@ -13,7 +13,7 @@ import rooibos
 
 def test_something():
     logging.getLogger('rooibos').addHandler(logging.StreamHandler())
-    with rooibos.ephemeral_server() as client:
+    with rooibos.ephemeral_server(verbose=True) as client:
         res = client.substitute("x = :[1]", {'1': "1 + 5"})
         assert res == "x = 1 + 5"
 
@@ -28,8 +28,12 @@ def test_something():
             actual = frozenset(env_to_pair_set(m.environment) for m in matches)
             assert actual == frozenset(dict_to_pair_set(m) for m in expected)
 
-        check_matches("x = foo(bar)", "x = :[1]", [{'1': "foo(bar)"}])
+        def check_num_matches(src: str, tpl: str, expected: int) -> None:
+            matches = list(client.matches(src, tpl))
+            assert len(matches) == expected
 
+        # check_matches("x = foo(bar)", "x = :[1]", [{'1': "foo(bar)"}])
+        check_num_matches("x + y + z", "+", 2)
 
 if __name__ == '__main__':
     test_something()
