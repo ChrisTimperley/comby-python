@@ -14,9 +14,19 @@ setup(
     author_email='christimperley@googlemail.com',
     url='https://github.com/squaresLab/rooibos.py',
     license='mit',
-    python_requires='>=3.5',
+    classifiers=[
+        'Natural Language :: English',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+    ],
+    python_requires='>=2.7',
     install_requires=[
-        'requests>=2.0.0'
+        'requests>=2.0.0',
+        'typing'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},

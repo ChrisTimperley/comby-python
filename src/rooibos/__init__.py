@@ -1,6 +1,5 @@
 from typing import Dict, Tuple, Iterator, List, Any
 from contextlib import contextmanager
-from urllib.parse import urljoin, urlparse
 from tempfile import TemporaryFile
 from timeit import default_timer as timer
 import time
@@ -8,6 +7,11 @@ import os
 import subprocess
 import signal
 import logging
+
+try:
+    from urllib.parse import urljoin, urlparse
+except ImportError:
+    from urlparse import urljoin, urlparse
 
 import requests
 
@@ -26,43 +30,50 @@ __all__ = [
     'ephemeral_server'
 ]
 
+
 class Location(object):
     """
     Represents the location of a single character within a source text by its
     zero-indexed line and column numbers.
     """
     @staticmethod
-    def from_string(s: str) -> 'Location':
+    def from_string(s):
+        # type: (str) -> Location
         s_line, _, s_col = s.partition(":")
         line = int(s_line)
         col = int(s_col)
         return Location(line, col)
 
-    def __init__(self, line: int, col: int) -> None:
+    def __init__(self, line, col):
+        # type: (int, int) -> None
         assert line > 0, "expected one-indexed line number greater than zero"
         assert col >= 0, "expected one-indexed column number greater or equal to zero"
         self.__line = line
         self.__col = col
 
-    def __str__(self) -> str:
+    def __str__(self):
+        # type: () -> str
         """
         Describes this location as a string of the form `line:col`, where
         `line and `col` are one-indexed line and column numbers.
         """
         return "{}:{}".format(self.line, self.col)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: () -> str
         return "rooibos.Location({})".format(self.__str__())
 
     @property
-    def line(self) -> int:
+    def line(self):
+        # type: () -> int
         """
         The one-indexed line number for this location.
         """
         return self.__line
 
     @property
-    def col(self) -> int:
+    def col(self):
+        # type: () -> int
         """
         The one-indexed column number for this location.
         """
@@ -75,13 +86,15 @@ class LocationRange(object):
     (non-inclusive) range of character positions.
     """
     @staticmethod
-    def from_string(s: str) -> 'LocationRange':
+    def from_string(s):
+        # type: (str) -> LocationRange
         s_start, _, s_end = s.partition("::")
         loc_start = Location.from_string(s_start)
         loc_end = Location.from_string(s_end)
         return LocationRange(loc_start, loc_end)
 
-    def __init__(self, start: Location, stop: Location) -> None:
+    def __init__(self, start, stop):
+        # type: (Location, Location) -> None
         """
         Constructs a (non-inclusive) location range from a start and stop
         location.
@@ -93,7 +106,8 @@ class LocationRange(object):
         self.__start = start
         self.__stop = stop
 
-    def __str__(self) -> str:
+    def __str__(self):
+        # type: () -> str
         """
         Describes this location range as a string of the form `start::stop`,
         where `start` and `stop` are string-based descriptions of the positions
@@ -101,18 +115,21 @@ class LocationRange(object):
         """
         return "{}::{}".format(self.start, self.stop)
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: () -> str
         return "rooibos.LocationRange({})".format(self.__str__())
 
     @property
-    def start(self) -> Location:
+    def start(self):
+        # type: () -> Location
         """
         The position at which this range begins.
         """
         return self.__start
 
     @property
-    def stop(self) -> Location:
+    def stop(self):
+        # type: () -> Location
         """
         The position at which this range ends, inclusive.
         """
@@ -124,7 +141,8 @@ class BoundTerm(object):
     Represents a binding of a named term to a fragment of source code.
     """
     @staticmethod
-    def from_dict(d: dict) -> 'BoundTerm':
+    def from_dict(d):
+        # type: (Dict[str, Any]) -> BoundTerm
         """
         Constructs a bound term from a dictionary-based description.
         """
@@ -133,10 +151,10 @@ class BoundTerm(object):
                          fragment=d['content'])
 
     def __init__(self,
-                 term: str,
-                 location: LocationRange,
-                 fragment: str
-                 ) -> None:
+                 term,      # type: str,
+                 location,  # type: LocationRange,
+                 fragment,  # type: str
+                 ):         # type: (...) -> None
         """
         Constructs a new bound term.
 
@@ -149,26 +167,30 @@ class BoundTerm(object):
         self.__location = location
         self.__fragment = fragment
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: () -> str
         s = "rooibos.BoundTerm({}, {}, {})"
         return s.format(self.term, str(self.location), self.fragment)
 
     @property
-    def term(self) -> str:
+    def term(self):
+        # type: () -> str
         """
         The name of the term.
         """
         return self.__term
 
     @property
-    def location(self) -> LocationRange:
+    def location(self):
+        # type: () -> LocationRange
         """
         The location range covered by this term.
         """
         return self.__location
 
     @property
-    def fragment(self) -> str:
+    def fragment(self):
+        # type: () -> str
         """
         The source code fragment to which this term is bound, given as a
         string.
@@ -178,27 +200,30 @@ class BoundTerm(object):
 
 class Environment(object):
     @staticmethod
-    def from_dict(d: Any) -> 'Environment':
+    def from_dict(d):
+        # type: (Dict[str, Any]) -> Environment
         return Environment([BoundTerm.from_dict(bt) for bt in d])
 
-    def __init__(self,
-                 bindings: List[BoundTerm]
-                 ) -> None:
+    def __init__(self, bindings):
+        # type: (List[BoundTerm]) -> None
         self.__bindings = {b.term: b for b in bindings}
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: () -> str
         s = "rooibos.Environment([{}])"
         s = s.format(', '.join([repr(self[t]) for t in self]))
         return s
 
-    def __iter__(self) -> Iterator[str]:
+    def __iter__(self):
+        # type: () -> Iterator[str]
         """
         Returns an iterator over the names of the terms contained within
         this environment.
         """
         return self.__bindings.keys().__iter__()
 
-    def __getitem__(self, term: str) -> BoundTerm:
+    def __getitem__(self, term):
+        # type: (str) -> BoundTerm
         """
         Fetches details of a particular term within this environment.
 
@@ -220,17 +245,16 @@ class Match(object):
     of template terms to snippets of source code.
     """
     @staticmethod
-    def from_dict(d: Any) -> 'Match':
+    def from_dict(d):
+        # type: (Dict[str, Any]) -> Match
         """
         Constructs a match from a dictionary-based description.
         """
         return Match(environment=Environment.from_dict(d['environment']),
                      location=LocationRange.from_string(d['location']))
 
-    def __init__(self,
-                 environment: Environment,
-                 location: LocationRange
-                 ) -> None:
+    def __init__(self, environment, location):
+        # type: (Environment, LocationRange) -> None
         """
         Constructs a new match.
 
@@ -242,12 +266,14 @@ class Match(object):
         self.__environment = environment
         self.__location = location
 
-    def __repr__(self) -> str:
+    def __repr__(self):
+        # type: () -> str
         s = "rooibos.Match({}, {})"
         s = s.format(str(self.__location), repr(self.__environment))
         return s
 
-    def __getitem__(self, term: str) -> BoundTerm:
+    def __getitem__(self, term):
+        # type: (str) -> BoundTerm
         """
         Retrieves a bound term from this match.
 
@@ -263,7 +289,8 @@ class Match(object):
         return self.__environment[term]
 
     @property
-    def environment(self) -> Environment:
+    def environment(self):
+        # type: () -> Environment
         """
         The environment that defines the mapping from terms in the match
         template to snippets in the source code.
@@ -271,7 +298,8 @@ class Match(object):
         return self.__environment
 
     @property
-    def location(self) -> LocationRange:
+    def location(self):
+        # type: () -> LocationRange
         """
         The range of locations in the source text over which the template was
         matched.
@@ -284,10 +312,10 @@ class Client(object):
     Provides an interface for communicating with a Rooibos server.
     """
     def __init__(self,
-                 base_url: str,
-                 timeout: int = 30,
-                 timeout_connection: int = 30
-                 ) -> None:
+                 base_url,              # type: str
+                 timeout=30,            # type: int
+                 timeout_connection=30  # type: int
+                 ):                     # type: (...) -> None
         """
         Constructs a new client.
 
@@ -327,22 +355,24 @@ class Client(object):
             raise ConnectionFailure
 
     @property
-    def base_url(self) -> str:
+    def base_url(self):
+        # type: () -> str
         """
         The base URL of the Rooibos server to which this client is attached.
         """
         return self.__base_url
 
-    def _url(self, path: str) -> str:
+    def _url(self, path):
+        # type: (str) -> str
         """
         Computes the URL for a resource located at a given path on the server.
         """
         return urljoin(self.__base_url, path)
 
     def matches(self,
-                source: str,
-                template: str
-                ) -> Iterator[Match]:
+                source,     # type: str
+                template    # type: str
+                ):          # type: (...) -> Iterator[Match]
         """
         Finds all matches of a given template within a source text.
 
@@ -377,9 +407,9 @@ class Client(object):
             yield match
 
     def substitute(self,
-                   template: str,
-                   args: Dict[str, str]
-                   ) -> str:
+                   template,    # type: str
+                   args         # type: Dict[str, str]
+                   ):           # type: (...) -> str
         """
         Substitutes a given set of terms into a given template.
         """
@@ -398,11 +428,11 @@ class Client(object):
         return response.text
 
     def rewrite(self,
-                source: str,
-                match: str,
-                rewrite: str,
-                args: Dict[str, str] = None
-                ) -> str:
+                source,     # type: str
+                match,      # type: str
+                rewrite,    # type: str
+                args=None   # type: Dict[str, str]
+                ):          # type: (...) -> str
         """
         Rewrites all matches of a given template in a source text using a
         provided rewrite template and an optional set of arguments to that
@@ -429,10 +459,9 @@ class Client(object):
 
 
 @contextmanager
-def ephemeral_server(*,
-                     port: int = 8888,
-                     verbose: bool = False
-                     ) -> Iterator[Client]:
+def ephemeral_server(port=8888,     # type: int
+                     verbose=False  # type: bool
+                     ):             # type: (...) -> Iterator[Client]
     """
     Launches an ephemeral server instance that will be immediately
     close when no longer in context.
