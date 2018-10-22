@@ -1,6 +1,5 @@
 from typing import Dict, Tuple, Iterator, List, Any
 from contextlib import contextmanager
-from urllib.parse import urljoin, urlparse
 from tempfile import TemporaryFile
 from timeit import default_timer as timer
 import time
@@ -8,6 +7,11 @@ import os
 import subprocess
 import signal
 import logging
+
+try:
+    from urllib.parse import urljoin, urlparse
+except ImportError:
+    from urlparse import urljoin, urlparse
 
 import requests
 
