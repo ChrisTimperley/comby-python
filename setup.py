@@ -25,7 +25,8 @@ setup(
     ],
     python_requires='>=2.7',
     install_requires=[
-        'requests>=2.0.0'
+        'requests>=2.0.0',
+        'typing'
     ],
     packages=find_packages('src'),
     package_dir={'': 'src'},
