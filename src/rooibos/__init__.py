@@ -12,6 +12,7 @@ __all__ = (
 from typing import Dict, Tuple, Iterator, List, Any, Optional
 from urllib.parse import urljoin, urlparse
 from timeit import default_timer as timer
+from contextlib import contextmanager
 import time
 import os
 import subprocess
