@@ -1,26 +1,26 @@
+# -*- coding: utf-8 -*-
 from glob import glob
 from setuptools import setup, find_packages
 import os
 
-path = os.path.join(os.path.dirname(__file__), 'src/rooibos/version.py')
+path = os.path.join(os.path.dirname(__file__), 'src/comby/version.py')
 with open(path, 'r') as f:
     exec(f.read())
 
 setup(
-    name='rooibos',
+    name='comby',
     version=__version__,
     description='Lightweight language-independent syntax rewriting.',
-    author='Chris Timperley, Rijnard van Tonder',
+    author='Christopher Timperley',
     author_email='christimperley@googlemail.com',
-    url='https://github.com/squaresLab/rooibos.py',
+    url='https://github.com/ChrisTimperley/comby-python',
     license='mit',
     classifiers=[
         'Natural Language :: English',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.6',
     ],
     python_requires='>=3.5',
