@@ -3,13 +3,13 @@ sudo: required
 services:
 - docker
 python:
-- '2.7'
 - '3.5'
 - '3.6'
 install:
-- pip install mypy
+- pip install mypy pycodestyle
 - pip install .
 script:
+- pycodestyle src
 - mypy src --ignore-missing-imports
 notifications:
   email: false
