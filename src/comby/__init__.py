@@ -56,7 +56,7 @@ class Location:
         return "{}:{}".format(self.line, self.col)
 
     def __repr__(self) -> str:
-        return "rooibos.Location({})".format(self.__str__())
+        return "comby.Location({})".format(self.__str__())
 
     @property
     def line(self) -> int:
@@ -103,7 +103,7 @@ class LocationRange:
         return "{}::{}".format(self.start, self.stop)
 
     def __repr__(self) -> str:
-        return "rooibos.LocationRange({})".format(self.__str__())
+        return "comby.LocationRange({})".format(self.__str__())
 
     @property
     def start(self) -> Location:
@@ -142,7 +142,7 @@ class BoundTerm:
         self.__fragment = fragment
 
     def __repr__(self) -> str:
-        s = "rooibos.BoundTerm({}, {}, {})"
+        s = "comby.BoundTerm({}, {}, {})"
         return s.format(self.term, str(self.location), self.fragment)
 
     @property
@@ -170,7 +170,7 @@ class Environment:
         self.__bindings = {b.term: b for b in bindings}
 
     def __repr__(self) -> str:
-        s = "rooibos.Environment([{}])"
+        s = "comby.Environment([{}])"
         return s.format(', '.join([repr(self[t]) for t in self]))
 
     def __iter__(self) -> Iterator[str]:
@@ -218,7 +218,7 @@ class Match:
         self.__location = loc
 
     def __repr__(self) -> str:
-        s = "rooibos.Match({}, {})"
+        s = "comby.Match({}, {})"
         return s.format(str(self.__location), repr(self.__environment))
 
     def __getitem__(self, term: str) -> BoundTerm:
