@@ -1,10 +1,9 @@
-__all__ = ['RooibosException', 'ConnectionFailure']
+# -*- coding: utf-8 -*-
+__all__ = ('RooibosException', 'ConnectionFailure')
 
 
 class RooibosException(Exception):
-    """
-    Base class used by all Rooibos exceptions.
-    """
+    """Base class used by all Rooibos exceptions."""
 
 
 class ConnectionFailure(RooibosException):
