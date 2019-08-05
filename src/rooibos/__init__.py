@@ -162,7 +162,7 @@ class BoundTerm:
 
     @property
     def fragment(self) -> str:
-        """The source code fragment to which this term is bound, as a string.="""
+        """The source code fragment to which this term is bound."""
         return self.__fragment
 
 
