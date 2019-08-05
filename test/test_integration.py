@@ -8,12 +8,12 @@ import signal
 import time
 import logging
 
-import rooibos
+import comby
 
 
 def test_something():
     logging.getLogger('rooibos').addHandler(logging.StreamHandler())
-    with rooibos.ephemeral_server() as client:
+    with comby.ephemeral_server() as client:
         res = client.substitute("x = :[1]", {'1': "1 + 5"})
         assert res == "x = 1 + 5"
 
