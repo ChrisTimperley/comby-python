@@ -178,7 +178,7 @@ class Environment:
         s = "rooibos.Environment([{}])"
         return s.format(', '.join([repr(self[t]) for t in self]))
 
-    def __iter__(self) -> Iterator[str]
+    def __iter__(self) -> Iterator[str]:
         """
         Returns an iterator over the names of the terms within this
         environment.
