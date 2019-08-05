@@ -363,7 +363,8 @@ class Client:
         Returns:
             an iterator over all matches in the text.
         """
-        logger.info("finding matches of template [%s] in source: %s", template, source)
+        logger.info("finding matches of template [%s] in source: %s",
+                    template, source)
         url = self._url("matches")
         payload = {
             'source': source,
@@ -390,7 +391,8 @@ class Client:
                    args         # type: Dict[str, str]
                    ):           # type: (...) -> str
         """Substitutes a given set of terms into a given template."""
-        logger.info("substituting arguments (%s) into template (%s)", repr(args), template)
+        logger.info("substituting arguments (%s) into template (%s)",
+                    repr(args), template)
         url = self._url("substitute")
         payload = {
             'template': template,
@@ -414,7 +416,8 @@ class Client:
         provided rewrite template and an optional set of arguments to that
         rewrite template.
         """
-        logger.info("performing rewriting of source (%s) using match template (%s), rewrite template (%s) and arguments (%s)",
+        logger.info("performing rewriting of source (%s) using match template "
+                    "(%s), rewrite template (%s) and arguments (%s)",
                     source, match, rewrite, repr(args))
         if args is None:
             args = {}
