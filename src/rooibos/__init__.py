@@ -202,8 +202,8 @@ class Match:
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
         """Constructs a match from a dictionary-based description."""
-        return Match(environment=Environment.from_dict(d['environment']),
-                     location=LocationRange.from_string(d['location']))
+        return Match(Environment.from_dict(d['environment']),
+                     LocationRange.from_string(d['location']))
 
     def __init__(self, env: Environment, loc: LocationRange) -> None:
         """Constructs a new match.
