@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+This package provides a set of Python bindings for Comby, a general purpose
+tool for matching and rewriting code in arbitrary languages.
+"""
+__version__ = '0.0.1'
 __all__ = (
     'Location',
     'LocationRange',
@@ -6,6 +11,8 @@ __all__ = (
     'Environment',
     'Match',
     'Client',
+    'RooibosException',
+    'ConnectionFailure',
     'ephemeral_server'
 )
 
@@ -21,11 +28,19 @@ import logging
 
 import requests
 
-from .version import __version__
-from .exceptions import *
-
 logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
+
+
+class RooibosException(Exception):
+    """Base class used by all Rooibos exceptions."""
+
+
+class ConnectionFailure(RooibosException):
+    """
+    The client failed to establish a connection to the server within the
+    allotted connection timeout window.
+    """
 
 
 class Location:
