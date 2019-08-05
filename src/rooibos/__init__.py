@@ -130,11 +130,11 @@ class BoundTerm:
                          location=LocationRange.from_string(d['location']),
                          fragment=d['content'])
 
-        def __init__(self,
-                     term: str,
-                     location: LocationRange,
-                     fragment: str
-                     ) -> None:
+    def __init__(self,
+                 term: str,
+                 location: LocationRange,
+                 fragment: str
+                 ) -> None:
         """Constructs a new bound term.
 
         Parameters:
