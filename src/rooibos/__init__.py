@@ -163,7 +163,7 @@ class BoundTerm:
 class Environment:
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Environment':
-        return Environment([BoundTerm.from_dict(bt) for bt in d])
+        return Environment([BoundTerm.from_dict(bt) for bt in d.values()])
 
     def __init__(self, bindings: List[BoundTerm]) -> None:
         self.__bindings = {b.term: b for b in bindings}
