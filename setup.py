@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from glob import glob
 from setuptools import setup, find_packages
+import re
 import os
 
-path = os.path.join(os.path.dirname(__file__), 'src/comby/version.py')
+path = os.path.join(os.path.dirname(__file__), 'src/comby/__init__.py')
 with open(path, 'r') as f:
-    exec(f.read())
+    VERSION=re.search(r"__version__ = '([\d\.]+)'", f.read()).group(1)
 
 setup(
     name='comby',
-    version=__version__,
+    version=VERSION,
     description='Lightweight language-independent syntax rewriting.',
     author='Christopher Timperley',
     author_email='christimperley@googlemail.com',
