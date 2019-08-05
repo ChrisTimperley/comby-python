@@ -111,7 +111,8 @@ class LocationRange:
         """
         Describes this location range as a string of the form `start::stop`,
         where `start` and `stop` are string-based descriptions of the positions
-        of the first and last characters within this source range, respectively.
+        of the first and last characters within this source range,
+        respectively.
         """
         return "{}::{}".format(self.start, self.stop)
 
@@ -317,8 +318,6 @@ class Client:
         """
         self.__base_url = base_url
         self.__timeout = timeout
-        self.__logger = logging.getLogger('rooibos') # type: logging.Logger
-        self.__logger.setLevel(logging.INFO)
 
         # attempt to establish a connection
         url = self._url("status")
@@ -364,7 +363,6 @@ class Client:
         Returns:
             an iterator over all matches in the text.
         """
-        logger = self.__logger
         logger.info("finding matches of template [%s] in source: %s", template, source)
         url = self._url("matches")
         payload = {
@@ -392,7 +390,6 @@ class Client:
                    args         # type: Dict[str, str]
                    ):           # type: (...) -> str
         """Substitutes a given set of terms into a given template."""
-        logger = self.__logger
         logger.info("substituting arguments (%s) into template (%s)", repr(args), template)
         url = self._url("substitute")
         payload = {
@@ -417,7 +414,6 @@ class Client:
         provided rewrite template and an optional set of arguments to that
         rewrite template.
         """
-        logger = self.__logger
         logger.info("performing rewriting of source (%s) using match template (%s), rewrite template (%s) and arguments (%s)",
                     source, match, rewrite, repr(args))
         if args is None:
