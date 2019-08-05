@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+__all__ = (
+    'Location',
+    'LocationRange',
+    'BoundTerm',
+    'Environment',
+    'Match',
+    'Client',
+    'ephemeral_server'
+)
+
 from typing import Dict, Tuple, Iterator, List, Any
 from contextlib import contextmanager
 from tempfile import TemporaryFile
@@ -18,17 +29,8 @@ import requests
 from .version import __version__
 from .exceptions import *
 
-logging.getLogger(__name__).addHandler(logging.NullHandler())
-
-__all__ = [
-    'Location',
-    'LocationRange',
-    'BoundTerm',
-    'Environment',
-    'Match',
-    'Client',
-    'ephemeral_server'
-]
+logger = logging.getLogger(__name__)  # type: logging.Logger
+logger.setLevel(logging.DEBUG)
 
 
 class Location(object):
@@ -66,17 +68,13 @@ class Location(object):
     @property
     def line(self):
         # type: () -> int
-        """
-        The one-indexed line number for this location.
-        """
+        """The one-indexed line number for this location."""
         return self.__line
 
     @property
     def col(self):
         # type: () -> int
-        """
-        The one-indexed column number for this location.
-        """
+        """The one-indexed column number for this location."""
         return self.__col
 
 
@@ -122,24 +120,18 @@ class LocationRange(object):
     @property
     def start(self):
         # type: () -> Location
-        """
-        The position at which this range begins.
-        """
+        """The position at which this range begins."""
         return self.__start
 
     @property
     def stop(self):
         # type: () -> Location
-        """
-        The position at which this range ends, inclusive.
-        """
+        """The position at which this range ends, inclusive."""
         return self.__stop
 
 
 class BoundTerm(object):
-    """
-    Represents a binding of a named term to a fragment of source code.
-    """
+    """Represents a binding of a named term to a fragment of source code."""
     @staticmethod
     def from_dict(d):
         # type: (Dict[str, Any]) -> BoundTerm
@@ -247,16 +239,13 @@ class Match(object):
     @staticmethod
     def from_dict(d):
         # type: (Dict[str, Any]) -> Match
-        """
-        Constructs a match from a dictionary-based description.
-        """
+        """Constructs a match from a dictionary-based description."""
         return Match(environment=Environment.from_dict(d['environment']),
                      location=LocationRange.from_string(d['location']))
 
     def __init__(self, environment, location):
         # type: (Environment, LocationRange) -> None
-        """
-        Constructs a new match.
+        """Constructs a new match.
 
         Parameters:
             environment: an environment that describes the mapping from terms
@@ -274,8 +263,7 @@ class Match(object):
 
     def __getitem__(self, term):
         # type: (str) -> BoundTerm
-        """
-        Retrieves a bound term from this match.
+        """Retrieves a bound term from this match.
 
         Parameters:
             term: the name of the term.
@@ -300,24 +288,18 @@ class Match(object):
     @property
     def location(self):
         # type: () -> LocationRange
-        """
-        The range of locations in the source text over which the template was
-        matched.
-        """
+        """The range of locations in the text where the template matched."""
         return self.__location
 
 
 class Client(object):
-    """
-    Provides an interface for communicating with a Rooibos server.
-    """
+    """Provides an interface for communicating with a Rooibos server."""
     def __init__(self,
                  base_url,              # type: str
                  timeout=30,            # type: int
                  timeout_connection=30  # type: int
                  ):                     # type: (...) -> None
-        """
-        Constructs a new client.
+        """Constructs a new client.
 
         Parameters:
             base_url: the base URL of the Rooibos server.
@@ -364,17 +346,14 @@ class Client(object):
 
     def _url(self, path):
         # type: (str) -> str
-        """
-        Computes the URL for a resource located at a given path on the server.
-        """
+        """Computes the URL for a resource on the server."""
         return urljoin(self.__base_url, path)
 
     def matches(self,
                 source,     # type: str
                 template    # type: str
                 ):          # type: (...) -> Iterator[Match]
-        """
-        Finds all matches of a given template within a source text.
+        """Finds all matches of a given template within a source text.
 
         Parameters:
             source: the source text to be searched.
@@ -410,9 +389,7 @@ class Client(object):
                    template,    # type: str
                    args         # type: Dict[str, str]
                    ):           # type: (...) -> str
-        """
-        Substitutes a given set of terms into a given template.
-        """
+        """Substitutes a given set of terms into a given template."""
         logger = self.__logger
         logger.info("substituting arguments (%s) into template (%s)", repr(args), template)
         url = self._url("substitute")
