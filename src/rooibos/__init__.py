@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
 
 
-class Location(object):
+class Location:
     """
     Represents the location of a single character within a source text by its
     zero-indexed line and column numbers.
@@ -48,8 +48,10 @@ class Location(object):
 
     def __init__(self, line, col):
         # type: (int, int) -> None
-        assert line > 0, "expected one-indexed line number greater than zero"
-        assert col >= 0, "expected one-indexed column number greater or equal to zero"
+        assert line > 0, \
+            'expected one-indexed line number greater than zero'
+        assert col >= 0, \
+            'expected one-indexed column number greater or equal to zero'
         self.__line = line
         self.__col = col
 
@@ -78,7 +80,7 @@ class Location(object):
         return self.__col
 
 
-class LocationRange(object):
+class LocationRange:
     """
     Represents a contiguous range of locations within a given source text as a
     (non-inclusive) range of character positions.
@@ -130,7 +132,7 @@ class LocationRange(object):
         return self.__stop
 
 
-class BoundTerm(object):
+class BoundTerm:
     """Represents a binding of a named term to a fragment of source code."""
     @staticmethod
     def from_dict(d):
@@ -190,7 +192,7 @@ class BoundTerm(object):
         return self.__fragment
 
 
-class Environment(object):
+class Environment:
     @staticmethod
     def from_dict(d):
         # type: (Dict[str, Any]) -> Environment
@@ -231,7 +233,7 @@ class Environment(object):
         return self.__bindings[term]
 
 
-class Match(object):
+class Match:
     """
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
@@ -292,7 +294,7 @@ class Match(object):
         return self.__location
 
 
-class Client(object):
+class Client:
     """Provides an interface for communicating with a Rooibos server."""
     def __init__(self,
                  base_url,              # type: str
