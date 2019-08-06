@@ -68,29 +68,21 @@ class Location:
         return "{}:{}".format(self.line, self.col)
 
 
+@attr.s(frozen=True, slots=True, str=False)
 class LocationRange:
     """
     Represents a contiguous range of locations within a given source text as a
     (non-inclusive) range of character positions.
     """
+    start = attr.ib(type=Location)
+    stop = attr.ib(type=Location)
+
     @staticmethod
     def from_string(s: str) -> 'LocationRange':
         s_start, _, s_end = s.partition("::")
         loc_start = Location.from_string(s_start)
         loc_end = Location.from_string(s_end)
         return LocationRange(loc_start, loc_end)
-
-    def __init__(self, start: Location, stop: Location) -> None:
-        """
-        Constructs a (non-inclusive) location range from a start and stop
-        location.
-
-        Parameters:
-            start: the location at which the range begins.
-            stop: the location at which the range ends (non-inclusive).
-        """
-        self.__start = start
-        self.__stop = stop
 
     def __str__(self) -> str:
         """
@@ -100,19 +92,6 @@ class LocationRange:
         respectively.
         """
         return "{}::{}".format(self.start, self.stop)
-
-    def __repr__(self) -> str:
-        return "comby.LocationRange({})".format(self.__str__())
-
-    @property
-    def start(self) -> Location:
-        """The position at which this range begins."""
-        return self.__start
-
-    @property
-    def stop(self) -> Location:
-        """The position at which this range ends, inclusive."""
-        return self.__stop
 
 
 class BoundTerm:
