@@ -2,6 +2,8 @@
 """
 This module provides definitions for the exceptions raised by Comby.
 """
+
+
 class CombyException(Exception):
     """Base class used by all Comby exceptions."""
 
