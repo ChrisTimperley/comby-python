@@ -5,3 +5,20 @@
 [![Python versions](https://img.shields.io/pypi/pyversions/comby.svg)](https://pypi.org/project/comby)
 
 Python bindings for [Comby](https://github.com/comby-tools/comby).
+
+
+## Installation
+
+Comby must be installed: https://github.com/comby-tools/comby
+
+To install the latest release from PyPI:
+
+```
+$ pip install comby 
+```
+
+or to install from source:
+
+```
+$ pip install .
+```
