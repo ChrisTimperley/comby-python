@@ -15,7 +15,8 @@ import signal
 
 import requests
 
-from .core import CombyInterface, ConnectionFailure, Match
+from .core import CombyInterface, Match
+from .exceptions import ConnectionFailure
 
 logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)

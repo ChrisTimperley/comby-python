@@ -3,7 +3,7 @@
 This module defines several common data structures for describing code
 transformations, source locations, environments, matches, and templates.
 Additionally, this module defines a common interface for interacting with
-Comby, and implements a number of exceptions.
+Comby.
 """
 __all__ = (
     'Location',
@@ -11,26 +11,13 @@ __all__ = (
     'BoundTerm',
     'Environment',
     'Match',
-    'CombyInterface',
-    'CombyException',
-    'ConnectionFailure'
+    'CombyInterface'
 )
 
 from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
 import abc
 
 import attr
-
-
-class CombyException(Exception):
-    """Base class used by all Comby exceptions."""
-
-
-class ConnectionFailure(CombyException):
-    """
-    The client failed to establish a connection to the server within the
-    allotted connection timeout window.
-    """
 
 
 @attr.s(frozen=True, slots=True, str=False)
