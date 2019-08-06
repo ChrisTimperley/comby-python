@@ -10,7 +10,8 @@ __all__ = (
     'BoundTerm',
     'Environment',
     'Match',
-    'Client',
+    'CombyInterface',
+    'CombyHTTP',
     'CombyException',
     'ConnectionFailure',
     'ephemeral_server'
@@ -20,6 +21,7 @@ from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
 from urllib.parse import urljoin, urlparse
 from timeit import default_timer as timer
 from contextlib import contextmanager
+import abc
 import time
 import os
 import subprocess
@@ -195,8 +197,45 @@ class Match(Mapping[str, BoundTerm]):
         return self.environment[term]
 
 
-class Client:
-    """Provides an interface for communicating with a Comby server."""
+class CombyInterface(abc.ABC):
+    """Provides a standard interface for interacting with Comby."""
+    @abc.abstractmethod
+    def matches(self, source: str, template: str) -> Iterator[Match]:
+        """Finds all matches of a given template within a source text.
+
+        Parameters:
+            source: the source text to be searched.
+            template: the template that should be used for matching.
+
+        Returns:
+            an iterator over all matches in the text.
+        """
+        ...
+
+    @abc.abstractmethod
+    def substitute(self,
+                   template: str,
+                   args: Dict[str, str]
+                   ) -> str:
+        """Substitutes a set of terms into a given template."""
+        ...
+
+    @abc.abstractmethod
+    def rewrite(self,
+                source: str,
+                match: str,
+                rewrite: str,
+                args: Optional[Dict[str, str]] = None
+                ) -> str:
+        """
+        Rewrites all matches of a template in a source text using a rewrite
+        template and an optional set of arguments to that rewrite template.
+        """
+        ...
+
+
+class CombyHTTP(CombyInterface):
+    """Provides an interface for communicating with a Comby HTTP server."""
     def __init__(self,
                  base_url: str,
                  timeout: int = 30,
@@ -247,15 +286,6 @@ class Client:
         return urljoin(self.__base_url, path)
 
     def matches(self, source: str, template: str) -> Iterator[Match]:
-        """Finds all matches of a given template within a source text.
-
-        Parameters:
-            source: the source text to be searched.
-            template: the template that should be used for matching.
-
-        Returns:
-            an iterator over all matches in the text.
-        """
         logger.info("finding matches of template [%s] in source: %s",
                     template, source)
         url = self._url("matches")
@@ -279,11 +309,7 @@ class Client:
             logger.info("* match #%d: %s", i, repr(match))
             yield match
 
-    def substitute(self,
-                   template: str,
-                   args: Dict[str, str]
-                   ) -> str:
-        """Substitutes a given set of terms into a given template."""
+    def substitute(self, template: str, args: Dict[str, str]) -> str:
         logger.info("substituting arguments (%s) into template (%s)",
                     repr(args), template)
         url = self._url("substitute")
@@ -304,11 +330,6 @@ class Client:
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None
                 ) -> str:
-        """
-        Rewrites all matches of a given template in a source text using a
-        provided rewrite template and an optional set of arguments to that
-        rewrite template.
-        """
         logger.info("performing rewriting of source (%s) using match template "
                     "(%s), rewrite template (%s) and arguments (%s)",
                     source, match, rewrite, repr(args))
@@ -332,18 +353,22 @@ class Client:
 @contextmanager
 def ephemeral_server(port: int = 8888,
                      verbose: bool = False
-                     ) -> Iterator[Client]:
+                     ) -> Iterator[CombyHTTP]:
     """
     Launches an ephemeral server instance that will be immediately
     close when no longer in context.
 
-    Parameters:
-        port: the port that the server should run on.
-        verbose: if set to True, the server will print its output to the
-            stdout, otherwise it will remain silent.
+    Parameters
+    ----------
+    port: int
+        The port that the server should run on.
+    verbose: bool, default: False
+        If set to True, the server will print its output to the stdout,
+        otherwise it will remain silent.
 
-    Returns:
-        a client for communicating with the server.
+    Returns
+    -------
+    An HTTP client for communicating with the server.
     """
     url = "http://127.0.0.1:{}".format(port)
     cmd = ["rooibosd", "-p", str(port)]
@@ -355,7 +380,7 @@ def ephemeral_server(port: int = 8888,
                                 preexec_fn=os.setsid,
                                 stdout=stdout,
                                 stderr=stderr)
-        yield Client(url)
+        yield CombyHTTP(url)
     finally:
         if proc:
             os.killpg(proc.pid, signal.SIGTERM)
