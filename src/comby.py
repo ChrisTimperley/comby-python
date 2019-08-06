@@ -11,7 +11,7 @@ __all__ = (
     'Environment',
     'Match',
     'CombyInterface',
-    'Client',
+    'CombyHTTP',
     'CombyException',
     'ConnectionFailure',
     'ephemeral_server'
@@ -234,7 +234,7 @@ class CombyInterface(abc.ABC):
         ...
 
 
-class CombyClient(CombyInterface):
+class CombyHTTP(CombyInterface):
     """Provides an interface for communicating with a Comby HTTP server."""
     def __init__(self,
                  base_url: str,
@@ -353,18 +353,22 @@ class CombyClient(CombyInterface):
 @contextmanager
 def ephemeral_server(port: int = 8888,
                      verbose: bool = False
-                     ) -> Iterator[Client]:
+                     ) -> Iterator[CombyHTTP]:
     """
     Launches an ephemeral server instance that will be immediately
     close when no longer in context.
 
-    Parameters:
-        port: the port that the server should run on.
-        verbose: if set to True, the server will print its output to the
-            stdout, otherwise it will remain silent.
+    Parameters
+    ----------
+    port: int
+        The port that the server should run on.
+    verbose: bool, default: False
+        If set to True, the server will print its output to the stdout,
+        otherwise it will remain silent.
 
-    Returns:
-        a client for communicating with the server.
+    Returns
+    -------
+    An HTTP client for communicating with the server.
     """
     url = "http://127.0.0.1:{}".format(port)
     cmd = ["rooibosd", "-p", str(port)]
@@ -376,7 +380,7 @@ def ephemeral_server(port: int = 8888,
                                 preexec_fn=os.setsid,
                                 stdout=stdout,
                                 stderr=stderr)
-        yield Client(url)
+        yield CombyHTTP(url)
     finally:
         if proc:
             os.killpg(proc.pid, signal.SIGTERM)
