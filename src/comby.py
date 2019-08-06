@@ -67,9 +67,6 @@ class Location:
         """
         return "{}:{}".format(self.line, self.col)
 
-    def __repr__(self) -> str:
-        return "comby.Location({})".format(self.__str__())
-
 
 class LocationRange:
     """
