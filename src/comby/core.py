@@ -29,9 +29,18 @@ class Location:
         Zero-indexed line number.
     col: int
         Zero-indexed column number.
+    offset: int
+        Zero-indexed character offset.
     """
     line = attr.ib(type=int)
     col = attr.ib(type=int)
+    offset = attr.ib(type=int)
+
+    @staticmethod
+    def from_dict(d: Dict[str, Any]) -> 'Location':
+        return Location(line=d['line'],
+                        col=d['column'],
+                        offset=d['offset'])
 
     @staticmethod
     def from_string(s: str) -> 'Location':
