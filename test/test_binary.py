@@ -15,6 +15,16 @@ def test_match():
     print(matches[0])
 
 
+def test_rewrite():
+    comby = CombyBinary()
+    source = "print('hello world')"
+    template = "print(:[1])"
+    rewrite = "println(:[1])"
+    expected = "println('hello world')"
+    actual = comby.rewrite(source, template, rewrite)
+    assert actual == expected
+
+
 if __name__ == '__main__':
     logging.basicConfig()
-    test_match()
+    test_rewrite()
