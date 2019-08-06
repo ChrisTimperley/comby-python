@@ -7,6 +7,7 @@ import logging
 
 from .core import (Location, LocationRange, BoundTerm, Environment, Match,
                    CombyInterface, CombyHTTP, ConnectionFailure, ephemeral_server)
+from .http import CombyHTTP
 
 __version__ = '0.0.1'
 
