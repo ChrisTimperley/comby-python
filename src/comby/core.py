@@ -101,9 +101,9 @@ class BoundTerm:
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'BoundTerm':
         """Constructs a bound term from a dictionary-based description."""
-        return BoundTerm(term=d['term'],
-                         location=LocationRange.from_string(d['location']),
-                         fragment=d['content'])
+        return BoundTerm(term=d['variable'],
+                         location=LocationRange.from_dict(d['range']),
+                         fragment=d['value'])
 
 
 class Environment(Mapping[str, BoundTerm]):
