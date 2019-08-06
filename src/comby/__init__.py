@@ -9,6 +9,8 @@ from . import exceptions
 from .core import Location, LocationRange, BoundTerm, Environment, Match
 from .binary import CombyBinary
 
+Comby = CombyBinary
+
 __version__ = '0.0.1'
 
 logging.getLogger(__name__).setLevel(logging.DEBUG)
