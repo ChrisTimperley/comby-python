@@ -9,7 +9,7 @@ import logging
 import subprocess
 
 from .interface import CombyInterface
-from .common import Match
+from .core import Match
 
 import attr
 
