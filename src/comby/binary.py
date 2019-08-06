@@ -75,11 +75,11 @@ class CombyBinary(CombyInterface):
         logger.info("finding matches of template [%s] in source: %s",
                     template, source)
 
-        args = ('-stdin', '-json-pretty', '-match-only',
-                shlex.quote(template), 'foo')
-        args_s = ' '.join(args)
+        cmd = ('-stdin', '-json-pretty', '-match-only',
+               shlex.quote(template), 'foo')
+        cmd_s = ' '.join(cmd)
 
-        jsn = json.loads(self.call(args_s, text=source))
+        jsn = json.loads(self.call(cmd_s, text=source))
         jsn = jsn['matches']
         for jsn_match in jsn:
             yield Match.from_dict(jsn_match)
@@ -98,11 +98,11 @@ class CombyBinary(CombyInterface):
         if args:
             raise NotImplementedError("args are not currently supported")
 
-        args = ['-stdin', shlex.quote(match), shlex.quote(rewrite)]
-        args += ['-diff']
-        args_s = ' '.join(args)
+        cmd = ['-stdin', shlex.quote(match), shlex.quote(rewrite)]
+        cmd += ['-stdout']
+        cmd_s = ' '.join(cmd)
 
-        return self.call(args_s, text=source)
+        return self.call(cmd_s, text=source)
 
     def substitute(self, template: str, args: Dict[str, str]) -> str:
         raise NotImplementedError
