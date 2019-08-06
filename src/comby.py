@@ -10,6 +10,7 @@ __all__ = (
     'BoundTerm',
     'Environment',
     'Match',
+    'CombyInterface',
     'Client',
     'CombyException',
     'ConnectionFailure',
@@ -20,6 +21,7 @@ from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
 from urllib.parse import urljoin, urlparse
 from timeit import default_timer as timer
 from contextlib import contextmanager
+import abc
 import time
 import os
 import subprocess
@@ -195,8 +197,32 @@ class Match(Mapping[str, BoundTerm]):
         return self.environment[term]
 
 
-class Client:
-    """Provides an interface for communicating with a Comby server."""
+class CombyInterface(abc.ABC):
+    """Provides a standard interface for interacting with Comby."""
+    @abc.abstractmethod
+    def matches(self, source: str, template: str) -> Iterator[Match]:
+        """Finds all matches of a given template within a source text.
+
+        Parameters:
+            source: the source text to be searched.
+            template: the template that should be used for matching.
+
+        Returns:
+            an iterator over all matches in the text.
+        """
+        ...
+
+    @abc.abstractmethod
+    def substitute(self,
+                   template: str,
+                   args: Dict[str, str]
+                   ) -> str:
+        """Substitutes a set of terms into a given template."""
+        ...
+
+
+class CombyClient(CombyInterface):
+    """Provides an interface for communicating with a Comby HTTP server."""
     def __init__(self,
                  base_url: str,
                  timeout: int = 30,
