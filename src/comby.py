@@ -26,6 +26,7 @@ import subprocess
 import signal
 import logging
 
+import attr
 import requests
 
 logger = logging.getLogger(__name__)  # type: logging.Logger
@@ -43,25 +44,21 @@ class ConnectionFailure(CombyException):
     """
 
 
+@attr.s(frozen=True, slots=True, str=False)
 class Location:
     """
     Represents the location of a single character within a source text by its
     zero-indexed line and column numbers.
     """
+    line = attr.ib(type=int)
+    col = attr.ib(type=int)
+
     @staticmethod
     def from_string(s: str) -> 'Location':
         s_line, _, s_col = s.partition(":")
         line = int(s_line)
         col = int(s_col)
         return Location(line, col)
-
-    def __init__(self, line: int, col: int) -> None:
-        assert line > 0, \
-            'expected one-indexed line number greater than zero'
-        assert col >= 0, \
-            'expected one-indexed column number greater or equal to zero'
-        self.__line = line
-        self.__col = col
 
     def __str__(self) -> str:
         """
@@ -72,16 +69,6 @@ class Location:
 
     def __repr__(self) -> str:
         return "comby.Location({})".format(self.__str__())
-
-    @property
-    def line(self) -> int:
-        """The one-indexed line number for this location."""
-        return self.__line
-
-    @property
-    def col(self) -> int:
-        """The one-indexed column number for this location."""
-        return self.__col
 
 
 class LocationRange:
