@@ -80,7 +80,9 @@ class CombyBinary(CombyInterface):
         args_s = ' '.join(args)
 
         jsn = json.loads(self.call(args_s, text=source))
-        print(jsn)
+        jsn = jsn['matches']
+        for jsn_match in jsn:
+            print(match)
 
     def rewrite(self,
                 source: str,
