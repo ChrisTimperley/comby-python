@@ -11,7 +11,8 @@ __all__ = (
     'Match'
 )
 
-from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
+from typing import (Dict, Tuple, Iterator, List, Any, Optional, Mapping,
+                    Sequence)
 
 import attr
 
@@ -28,23 +29,18 @@ class Location:
         Zero-indexed line number.
     col: int
         Zero-indexed column number.
+    offset: int
+        Zero-indexed character offset.
     """
     line = attr.ib(type=int)
     col = attr.ib(type=int)
+    offset = attr.ib(type=int)
 
     @staticmethod
-    def from_string(s: str) -> 'Location':
-        s_line, _, s_col = s.partition(':')
-        line = int(s_line)
-        col = int(s_col)
-        return Location(line, col)
-
-    def __str__(self) -> str:
-        """
-        Describes this location as a string of the form `line:col`, where
-        `line and `col` are one-indexed line and column numbers.
-        """
-        return "{}:{}".format(self.line, self.col)
+    def from_dict(d: Dict[str, Any]) -> 'Location':
+        return Location(line=d['line'],
+                        col=d['column'],
+                        offset=d['offset'])
 
 
 @attr.s(frozen=True, slots=True, str=False)
@@ -64,20 +60,9 @@ class LocationRange:
     stop = attr.ib(type=Location)
 
     @staticmethod
-    def from_string(s: str) -> 'LocationRange':
-        s_start, _, s_end = s.partition("::")
-        loc_start = Location.from_string(s_start)
-        loc_end = Location.from_string(s_end)
-        return LocationRange(loc_start, loc_end)
-
-    def __str__(self) -> str:
-        """
-        Describes this location range as a string of the form `start::stop`,
-        where `start` and `stop` are string-based descriptions of the positions
-        of the first and last characters within this source range,
-        respectively.
-        """
-        return "{}::{}".format(self.start, self.stop)
+    def from_dict(d: Dict[str, Any]) -> 'LocationRange':
+        return LocationRange(Location.from_dict(d['start']),
+                             Location.from_dict(d['end']))
 
 
 @attr.s(frozen=True, slots=True)
@@ -100,17 +85,17 @@ class BoundTerm:
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'BoundTerm':
         """Constructs a bound term from a dictionary-based description."""
-        return BoundTerm(term=d['term'],
-                         location=LocationRange.from_string(d['location']),
-                         fragment=d['content'])
+        return BoundTerm(term=d['variable'],
+                         location=LocationRange.from_dict(d['range']),
+                         fragment=d['value'])
 
 
 class Environment(Mapping[str, BoundTerm]):
     @staticmethod
-    def from_dict(d: Dict[str, Any]) -> 'Environment':
-        return Environment([BoundTerm.from_dict(bt) for bt in d.values()])
+    def from_dict(ts: Sequence[Dict[str, Any]]) -> 'Environment':
+        return Environment([BoundTerm.from_dict(bt) for bt in ts])
 
-    def __init__(self, bindings: List[BoundTerm]) -> None:
+    def __init__(self, bindings: Sequence[BoundTerm]) -> None:
         self.__bindings = {b.term: b for b in bindings}
 
     def __repr__(self) -> str:
@@ -145,15 +130,26 @@ class Match(Mapping[str, BoundTerm]):
     """
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
+
+    Attributes
+    ----------
+    matched: str
+        the source text that was matched.
+    location: LocationRange
+        the range of location range that was matched.
+    environment: Environment
+        the associated environment, mapping template terms to snippets in the
+        source text, for the match.
     """
-    environment = attr.ib(type=Environment)
+    matched = attr.ib(type=str)
     location = attr.ib(type=LocationRange)
+    environment = attr.ib(type=Environment)
 
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
-        """Constructs a match from a dictionary-based description."""
-        return Match(Environment.from_dict(d['environment']),
-                     LocationRange.from_string(d['location']))
+        return Match(matched=d['matched'],
+                     location=LocationRange.from_dict(d['range']),
+                     environment=Environment.from_dict(d['environment']))
 
     def __len__(self) -> int:
         """Returns the number of bindings in the environment."""

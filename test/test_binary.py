@@ -10,7 +10,9 @@ def test_match():
     comby = CombyBinary()
     source = "print('hello world')"
     template = "print(:[1])"
-    comby.matches(source, template)
+    matches = list(comby.matches(source, template))
+    assert len(matches) == 1
+    print(matches[0])
 
 
 if __name__ == '__main__':
