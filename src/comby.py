@@ -220,6 +220,19 @@ class CombyInterface(abc.ABC):
         """Substitutes a set of terms into a given template."""
         ...
 
+    @abc.abstractmethod
+    def rewrite(self,
+                source: str,
+                match: str,
+                rewrite: str,
+                args: Optional[Dict[str, str]] = None
+                ) -> str:
+        """
+        Rewrites all matches of a template in a source text using a rewrite
+        template and an optional set of arguments to that rewrite template.
+        """
+        ...
+
 
 class CombyClient(CombyInterface):
     """Provides an interface for communicating with a Comby HTTP server."""
@@ -273,15 +286,6 @@ class CombyClient(CombyInterface):
         return urljoin(self.__base_url, path)
 
     def matches(self, source: str, template: str) -> Iterator[Match]:
-        """Finds all matches of a given template within a source text.
-
-        Parameters:
-            source: the source text to be searched.
-            template: the template that should be used for matching.
-
-        Returns:
-            an iterator over all matches in the text.
-        """
         logger.info("finding matches of template [%s] in source: %s",
                     template, source)
         url = self._url("matches")
@@ -305,11 +309,7 @@ class CombyClient(CombyInterface):
             logger.info("* match #%d: %s", i, repr(match))
             yield match
 
-    def substitute(self,
-                   template: str,
-                   args: Dict[str, str]
-                   ) -> str:
-        """Substitutes a given set of terms into a given template."""
+    def substitute(self, template: str, args: Dict[str, str]) -> str:
         logger.info("substituting arguments (%s) into template (%s)",
                     repr(args), template)
         url = self._url("substitute")
@@ -330,11 +330,6 @@ class CombyClient(CombyInterface):
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None
                 ) -> str:
-        """
-        Rewrites all matches of a given template in a source text using a
-        provided rewrite template and an optional set of arguments to that
-        rewrite template.
-        """
         logger.info("performing rewriting of source (%s) using match template "
                     "(%s), rewrite template (%s) and arguments (%s)",
                     source, match, rewrite, repr(args))
