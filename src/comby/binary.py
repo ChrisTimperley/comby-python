@@ -7,6 +7,7 @@ __all__ = ('CombyBinary',)
 from typing import Iterator, Optional, Dict
 import logging
 import subprocess
+import shlex
 
 from .interface import CombyInterface
 from .core import Match
