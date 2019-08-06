@@ -49,13 +49,20 @@ class Location:
     """
     Represents the location of a single character within a source text by its
     zero-indexed line and column numbers.
+
+    Attributes
+    ----------
+    line: int
+        Zero-indexed line number.
+    col: int
+        Zero-indexed column number.
     """
     line = attr.ib(type=int)
     col = attr.ib(type=int)
 
     @staticmethod
     def from_string(s: str) -> 'Location':
-        s_line, _, s_col = s.partition(":")
+        s_line, _, s_col = s.partition(':')
         line = int(s_line)
         col = int(s_col)
         return Location(line, col)
@@ -73,6 +80,13 @@ class LocationRange:
     """
     Represents a contiguous range of locations within a given source text as a
     (non-inclusive) range of character positions.
+
+    Attributes
+    ----------
+    start: Location
+        The start of the range.
+    stop: Location
+        The (non-inclusive) end of the range.
     """
     start = attr.ib(type=Location)
     stop = attr.ib(type=Location)
