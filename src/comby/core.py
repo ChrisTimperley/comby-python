@@ -11,7 +11,8 @@ __all__ = (
     'Match'
 )
 
-from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
+from typing import (Dict, Tuple, Iterator, List, Any, Optional, Mapping,
+                    Sequence)
 
 import attr
 
@@ -107,10 +108,10 @@ class BoundTerm:
 
 class Environment(Mapping[str, BoundTerm]):
     @staticmethod
-    def from_dict(d: Dict[str, Any]) -> 'Environment':
-        return Environment([BoundTerm.from_dict(bt) for bt in d.values()])
+    def from_dict(ts: Sequence[Dict[str, Any]]) -> 'Environment':
+        return Environment([BoundTerm.from_dict(bt) for bt in ts])
 
-    def __init__(self, bindings: List[BoundTerm]) -> None:
+    def __init__(self, bindings: Sequence[BoundTerm]) -> None:
         self.__bindings = {b.term: b for b in bindings}
 
     def __repr__(self) -> str:
