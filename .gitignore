@@ -1,3 +1,5 @@
+.mypy_cache
+
 Pipfile
 Pipfile.lock
 
