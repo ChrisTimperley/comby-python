@@ -32,11 +32,11 @@ logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
 
 
-class RooibosException(Exception):
+class CombyException(Exception):
     """Base class used by all Rooibos exceptions."""
 
 
-class ConnectionFailure(RooibosException):
+class ConnectionFailure(CombyException):
     """
     The client failed to establish a connection to the server within the
     allotted connection timeout window.
