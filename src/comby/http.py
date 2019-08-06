@@ -4,7 +4,7 @@ This module implements an interface for communicating with Comby over HTTP.
 """
 __all__ = ('CombyHTTP',)
 
-from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
+from typing import Dict, Iterator, Optional
 from urllib.parse import urljoin, urlparse
 from contextlib import contextmanager
 from timeit import default_timer as timer
@@ -15,7 +15,8 @@ import signal
 
 import requests
 
-from .core import CombyInterface, Match
+from .core import Match
+from .interface import CombyInterface
 from .exceptions import ConnectionFailure
 
 logger = logging.getLogger(__name__)  # type: logging.Logger

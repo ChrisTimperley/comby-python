@@ -2,20 +2,16 @@
 """
 This module defines several common data structures for describing code
 transformations, source locations, environments, matches, and templates.
-Additionally, this module defines a common interface for interacting with
-Comby.
 """
 __all__ = (
     'Location',
     'LocationRange',
     'BoundTerm',
     'Environment',
-    'Match',
-    'CombyInterface'
+    'Match'
 )
 
 from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
-import abc
 
 import attr
 
@@ -169,40 +165,3 @@ class Match(Mapping[str, BoundTerm]):
 
     def __getitem__(self, term: str) -> BoundTerm:
         return self.environment[term]
-
-
-class CombyInterface(abc.ABC):
-    """Provides a standard interface for interacting with Comby."""
-    @abc.abstractmethod
-    def matches(self, source: str, template: str) -> Iterator[Match]:
-        """Finds all matches of a given template within a source text.
-
-        Parameters:
-            source: the source text to be searched.
-            template: the template that should be used for matching.
-
-        Returns:
-            an iterator over all matches in the text.
-        """
-        ...
-
-    @abc.abstractmethod
-    def substitute(self,
-                   template: str,
-                   args: Dict[str, str]
-                   ) -> str:
-        """Substitutes a set of terms into a given template."""
-        ...
-
-    @abc.abstractmethod
-    def rewrite(self,
-                source: str,
-                match: str,
-                rewrite: str,
-                args: Optional[Dict[str, str]] = None
-                ) -> str:
-        """
-        Rewrites all matches of a template in a source text using a rewrite
-        template and an optional set of arguments to that rewrite template.
-        """
-        ...
