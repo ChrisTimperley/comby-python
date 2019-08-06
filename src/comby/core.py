@@ -42,20 +42,6 @@ class Location:
                         col=d['column'],
                         offset=d['offset'])
 
-    @staticmethod
-    def from_string(s: str) -> 'Location':
-        s_line, _, s_col = s.partition(':')
-        line = int(s_line)
-        col = int(s_col)
-        return Location(line, col)
-
-    def __str__(self) -> str:
-        """
-        Describes this location as a string of the form `line:col`, where
-        `line and `col` are one-indexed line and column numbers.
-        """
-        return "{}:{}".format(self.line, self.col)
-
 
 @attr.s(frozen=True, slots=True, str=False)
 class LocationRange:
@@ -77,22 +63,6 @@ class LocationRange:
     def from_dict(d: Dict[str, Any]) -> 'LocationRange':
         return LocationRange(Location.from_dict(d['start']),
                              Location.from_dict(d['end']))
-
-    @staticmethod
-    def from_string(s: str) -> 'LocationRange':
-        s_start, _, s_end = s.partition("::")
-        loc_start = Location.from_string(s_start)
-        loc_end = Location.from_string(s_end)
-        return LocationRange(loc_start, loc_end)
-
-    def __str__(self) -> str:
-        """
-        Describes this location range as a string of the form `start::stop`,
-        where `start` and `stop` are string-based descriptions of the positions
-        of the first and last characters within this source range,
-        respectively.
-        """
-        return "{}::{}".format(self.start, self.stop)
 
 
 @attr.s(frozen=True, slots=True)
