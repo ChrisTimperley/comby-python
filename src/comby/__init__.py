@@ -8,6 +8,7 @@ import logging
 from . import exceptions
 from .core import Location, LocationRange, BoundTerm, Environment, Match
 from .http import CombyHTTP
+from .binary import CombyBinary
 
 __version__ = '0.0.1'
 
