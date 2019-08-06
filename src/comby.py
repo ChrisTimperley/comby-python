@@ -16,7 +16,7 @@ __all__ = (
     'ephemeral_server'
 )
 
-from typing import Dict, Tuple, Iterator, List, Any, Optional
+from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
 from urllib.parse import urljoin, urlparse
 from timeit import default_timer as timer
 from contextlib import contextmanager
@@ -133,7 +133,7 @@ class BoundTerm:
                          fragment=d['content'])
 
 
-class Environment:
+class Environment(Mapping[str, BoundTerm]):
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Environment':
         return Environment([BoundTerm.from_dict(bt) for bt in d.values()])
@@ -145,11 +145,12 @@ class Environment:
         s = "comby.Environment([{}])"
         return s.format(', '.join([repr(self[t]) for t in self]))
 
+    def __len__(self) -> int:
+        """Returns the number of bindings in this environment."""
+        return len(self.__bindings)
+
     def __iter__(self) -> Iterator[str]:
-        """
-        Returns an iterator over the names of the terms within this
-        environment.
-        """
+        """Returns an iterator over the term names in this environment."""
         return self.__bindings.keys().__iter__()
 
     def __getitem__(self, term: str) -> BoundTerm:
@@ -167,58 +168,31 @@ class Environment:
         return self.__bindings[term]
 
 
-class Match:
+@attr.s(slots=True)
+class Match(Mapping[str, BoundTerm]):
     """
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
     """
+    environment = attr.ib(type=Environment)
+    location = attr.ib(type=LocationRange)
+
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
         """Constructs a match from a dictionary-based description."""
         return Match(Environment.from_dict(d['environment']),
                      LocationRange.from_string(d['location']))
 
-    def __init__(self, env: Environment, loc: LocationRange) -> None:
-        """Constructs a new match.
+    def __len__(self) -> int:
+        """Returns the number of bindings in the environment."""
+        return len(self.environment)
 
-        Parameters:
-            env: an environment that describes the mapping from terms
-                in the match template to snippets within the source text.
-            loc: the location range over which the template was matched.
-        """
-        self.__environment = env
-        self.__location = loc
-
-    def __repr__(self) -> str:
-        s = "comby.Match({}, {})"
-        return s.format(str(self.__location), repr(self.__environment))
+    def __iter__(self) -> Iterator[str]:
+        """Returns an iterator over the term names in the environment."""
+        yield from self.environment
 
     def __getitem__(self, term: str) -> BoundTerm:
-        """Retrieves a bound term from this match.
-
-        Parameters:
-            term: the name of the term.
-
-        Returns:
-            details of the source code to which the term was bound.
-
-        Raises:
-            KeyError: if there is no term with the given name in the match.
-        """
-        return self.__environment[term]
-
-    @property
-    def environment(self) -> Environment:
-        """
-        The environment that defines the mapping from terms in the match
-        template to snippets in the source code.
-        """
-        return self.__environment
-
-    @property
-    def location(self) -> LocationRange:
-        """The range of locations in the text where the template matched."""
-        return self.__location
+        return self.environment[term]
 
 
 class Client:
