@@ -145,15 +145,27 @@ class Match(Mapping[str, BoundTerm]):
     """
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
+
+    Attributes
+    ----------
+    matched: str
+        the source text that was matched.
+    location: LocationRange
+        the range of location range that was matched.
+    environment: Environment
+        the associated environment, mapping template terms to snippets in the
+        source text, for the match.
     """
-    environment = attr.ib(type=Environment)
+    matched = attr.ib(type=str)
     location = attr.ib(type=LocationRange)
+    environment = attr.ib(type=Environment)
 
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
         """Constructs a match from a dictionary-based description."""
-        return Match(Environment.from_dict(d['environment']),
-                     LocationRange.from_string(d['location']))
+        return Match(matched=d['matched'],
+                     location=LocationRange.from_dict(d['range']),
+                     environment=Environment.from_dict(d['environment']))
 
     def __len__(self) -> int:
         """Returns the number of bindings in the environment."""
