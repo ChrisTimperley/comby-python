@@ -65,6 +65,11 @@ class LocationRange:
     stop = attr.ib(type=Location)
 
     @staticmethod
+    def from_dict(d: Dict[str, Any]) -> 'LocationRange':
+        return LocationRange(Location.from_dict(d['start']),
+                             Location.from_dict(d['end']))
+
+    @staticmethod
     def from_string(s: str) -> 'LocationRange':
         s_start, _, s_end = s.partition("::")
         loc_start = Location.from_string(s_start)
@@ -163,7 +168,6 @@ class Match(Mapping[str, BoundTerm]):
 
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
-        """Constructs a match from a dictionary-based description."""
         return Match(matched=d['matched'],
                      location=LocationRange.from_dict(d['range']),
                      environment=Environment.from_dict(d['environment']))
