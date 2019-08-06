@@ -135,39 +135,3 @@ class CombyHTTP(CombyInterface):
         assert response.status_code == 200
         logger.info("performed source code rewrite:\n%s", response.text)
         return response.text
-
-
-@contextmanager
-def ephemeral_server(port: int = 8888,
-                     verbose: bool = False
-                     ) -> Iterator[CombyHTTP]:
-    """
-    Launches an ephemeral server instance that will be immediately
-    close when no longer in context.
-
-    Parameters
-    ----------
-    port: int
-        The port that the server should run on.
-    verbose: bool, default: False
-        If set to True, the server will print its output to the stdout,
-        otherwise it will remain silent.
-
-    Returns
-    -------
-    An HTTP client for communicating with the server.
-    """
-    url = "http://127.0.0.1:{}".format(port)
-    cmd = ["rooibosd", "-p", str(port)]
-    proc = None
-    try:
-        stdout = None if verbose else subprocess.DEVNULL
-        stderr = None if verbose else subprocess.DEVNULL
-        proc = subprocess.Popen(cmd,
-                                preexec_fn=os.setsid,
-                                stdout=stdout,
-                                stderr=stderr)
-        yield CombyHTTP(url)
-    finally:
-        if proc:
-            os.killpg(proc.pid, signal.SIGTERM)

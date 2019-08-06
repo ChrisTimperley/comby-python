@@ -6,7 +6,7 @@ tool for matching and rewriting code in arbitrary languages.
 import logging
 
 from .core import (Location, LocationRange, BoundTerm, Environment, Match,
-                   CombyInterface, CombyHTTP, ConnectionFailure, ephemeral_server)
+                   CombyInterface, CombyHTTP, ConnectionFailure)
 from .http import CombyHTTP
 
 __version__ = '0.0.1'
