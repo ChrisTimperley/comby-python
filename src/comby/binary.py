@@ -20,6 +20,7 @@ logger.setLevel(logging.DEBUG)
 @attr.s(frozen=True)
 class CombyBinary(CombyInterface):
     """Provides an interface to the Comby binary.
+
     Attributes
     ----------
     location: str
