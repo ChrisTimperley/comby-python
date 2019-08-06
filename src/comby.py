@@ -16,7 +16,7 @@ __all__ = (
     'ephemeral_server'
 )
 
-from typing import Dict, Tuple, Iterator, List, Any, Optional
+from typing import Dict, Tuple, Iterator, List, Any, Optional, Mapping
 from urllib.parse import urljoin, urlparse
 from timeit import default_timer as timer
 from contextlib import contextmanager
@@ -26,6 +26,7 @@ import subprocess
 import signal
 import logging
 
+import attr
 import requests
 
 logger = logging.getLogger(__name__)  # type: logging.Logger
@@ -43,25 +44,28 @@ class ConnectionFailure(CombyException):
     """
 
 
+@attr.s(frozen=True, slots=True, str=False)
 class Location:
     """
     Represents the location of a single character within a source text by its
     zero-indexed line and column numbers.
+
+    Attributes
+    ----------
+    line: int
+        Zero-indexed line number.
+    col: int
+        Zero-indexed column number.
     """
+    line = attr.ib(type=int)
+    col = attr.ib(type=int)
+
     @staticmethod
     def from_string(s: str) -> 'Location':
-        s_line, _, s_col = s.partition(":")
+        s_line, _, s_col = s.partition(':')
         line = int(s_line)
         col = int(s_col)
         return Location(line, col)
-
-    def __init__(self, line: int, col: int) -> None:
-        assert line > 0, \
-            'expected one-indexed line number greater than zero'
-        assert col >= 0, \
-            'expected one-indexed column number greater or equal to zero'
-        self.__line = line
-        self.__col = col
 
     def __str__(self) -> str:
         """
@@ -70,43 +74,29 @@ class Location:
         """
         return "{}:{}".format(self.line, self.col)
 
-    def __repr__(self) -> str:
-        return "comby.Location({})".format(self.__str__())
 
-    @property
-    def line(self) -> int:
-        """The one-indexed line number for this location."""
-        return self.__line
-
-    @property
-    def col(self) -> int:
-        """The one-indexed column number for this location."""
-        return self.__col
-
-
+@attr.s(frozen=True, slots=True, str=False)
 class LocationRange:
     """
     Represents a contiguous range of locations within a given source text as a
     (non-inclusive) range of character positions.
+
+    Attributes
+    ----------
+    start: Location
+        The start of the range.
+    stop: Location
+        The (non-inclusive) end of the range.
     """
+    start = attr.ib(type=Location)
+    stop = attr.ib(type=Location)
+
     @staticmethod
     def from_string(s: str) -> 'LocationRange':
         s_start, _, s_end = s.partition("::")
         loc_start = Location.from_string(s_start)
         loc_end = Location.from_string(s_end)
         return LocationRange(loc_start, loc_end)
-
-    def __init__(self, start: Location, stop: Location) -> None:
-        """
-        Constructs a (non-inclusive) location range from a start and stop
-        location.
-
-        Parameters:
-            start: the location at which the range begins.
-            stop: the location at which the range ends (non-inclusive).
-        """
-        self.__start = start
-        self.__stop = stop
 
     def __str__(self) -> str:
         """
@@ -117,22 +107,24 @@ class LocationRange:
         """
         return "{}::{}".format(self.start, self.stop)
 
-    def __repr__(self) -> str:
-        return "comby.LocationRange({})".format(self.__str__())
 
-    @property
-    def start(self) -> Location:
-        """The position at which this range begins."""
-        return self.__start
-
-    @property
-    def stop(self) -> Location:
-        """The position at which this range ends, inclusive."""
-        return self.__stop
-
-
+@attr.s(frozen=True, slots=True)
 class BoundTerm:
-    """Represents a binding of a named term to a fragment of source code."""
+    """Represents a binding of a named term to a fragment of source code.
+
+    Attributes
+    ----------
+    term: str
+        The name of the term.
+    location: LocationRange
+        The location range to which the term is bound.
+    fragment: str
+        The source code to which the term is bound.
+    """
+    term = attr.ib(type=str)
+    location = attr.ib(type=LocationRange)
+    fragment = attr.ib(type=str)
+
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'BoundTerm':
         """Constructs a bound term from a dictionary-based description."""
@@ -140,43 +132,8 @@ class BoundTerm:
                          location=LocationRange.from_string(d['location']),
                          fragment=d['content'])
 
-    def __init__(self,
-                 term: str,
-                 location: LocationRange,
-                 fragment: str
-                 ) -> None:
-        """Constructs a new bound term.
 
-        Parameters:
-            term: the name of the term.
-            location: the location range at which the term was bound.
-            fragment: the source code to which the term was bound.
-        """
-        self.__term = term
-        self.__location = location
-        self.__fragment = fragment
-
-    def __repr__(self) -> str:
-        s = "comby.BoundTerm({}, {}, {})"
-        return s.format(self.term, str(self.location), self.fragment)
-
-    @property
-    def term(self) -> str:
-        """The name of the term."""
-        return self.__term
-
-    @property
-    def location(self) -> LocationRange:
-        """The location range covered by this term."""
-        return self.__location
-
-    @property
-    def fragment(self) -> str:
-        """The source code fragment to which this term is bound."""
-        return self.__fragment
-
-
-class Environment:
+class Environment(Mapping[str, BoundTerm]):
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Environment':
         return Environment([BoundTerm.from_dict(bt) for bt in d.values()])
@@ -188,11 +145,12 @@ class Environment:
         s = "comby.Environment([{}])"
         return s.format(', '.join([repr(self[t]) for t in self]))
 
+    def __len__(self) -> int:
+        """Returns the number of bindings in this environment."""
+        return len(self.__bindings)
+
     def __iter__(self) -> Iterator[str]:
-        """
-        Returns an iterator over the names of the terms within this
-        environment.
-        """
+        """Returns an iterator over the term names in this environment."""
         return self.__bindings.keys().__iter__()
 
     def __getitem__(self, term: str) -> BoundTerm:
@@ -210,58 +168,31 @@ class Environment:
         return self.__bindings[term]
 
 
-class Match:
+@attr.s(slots=True)
+class Match(Mapping[str, BoundTerm]):
     """
     Describes a single match of a given template in a source text as a mapping
     of template terms to snippets of source code.
     """
+    environment = attr.ib(type=Environment)
+    location = attr.ib(type=LocationRange)
+
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'Match':
         """Constructs a match from a dictionary-based description."""
         return Match(Environment.from_dict(d['environment']),
                      LocationRange.from_string(d['location']))
 
-    def __init__(self, env: Environment, loc: LocationRange) -> None:
-        """Constructs a new match.
+    def __len__(self) -> int:
+        """Returns the number of bindings in the environment."""
+        return len(self.environment)
 
-        Parameters:
-            env: an environment that describes the mapping from terms
-                in the match template to snippets within the source text.
-            loc: the location range over which the template was matched.
-        """
-        self.__environment = env
-        self.__location = loc
-
-    def __repr__(self) -> str:
-        s = "comby.Match({}, {})"
-        return s.format(str(self.__location), repr(self.__environment))
+    def __iter__(self) -> Iterator[str]:
+        """Returns an iterator over the term names in the environment."""
+        yield from self.environment
 
     def __getitem__(self, term: str) -> BoundTerm:
-        """Retrieves a bound term from this match.
-
-        Parameters:
-            term: the name of the term.
-
-        Returns:
-            details of the source code to which the term was bound.
-
-        Raises:
-            KeyError: if there is no term with the given name in the match.
-        """
-        return self.__environment[term]
-
-    @property
-    def environment(self) -> Environment:
-        """
-        The environment that defines the mapping from terms in the match
-        template to snippets in the source code.
-        """
-        return self.__environment
-
-    @property
-    def location(self) -> LocationRange:
-        """The range of locations in the text where the template matched."""
-        return self.__location
+        return self.environment[term]
 
 
 class Client:
