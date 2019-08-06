@@ -90,7 +90,19 @@ class CombyBinary(CombyInterface):
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None
                 ) -> str:
-        raise NotImplementedError
+        logger.info("performing rewriting of source (%s) using match template "
+                    "(%s), rewrite template (%s) and arguments (%s)",
+                    source, match, rewrite, repr(args))
+        if args is None:
+            args = {}
+        if args:
+            raise NotImplementedError("args are not currently supported")
+
+        args = ['-stdin', shlex.quote(match), shlex.quote(rewrite)]
+        args += ['-diff']
+        args_s = ' '.join(args)
+
+        return self.call(args_s, text=source)
 
     def substitute(self, template: str, args: Dict[str, str]) -> str:
         raise NotImplementedError
