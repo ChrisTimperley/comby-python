@@ -40,3 +40,14 @@ class CombyBinary(CombyInterface):
         assert p.returncode == 0
         jsn = json.loads(p.stdout.decode('utf8'))
         print(jsn)
+
+    def rewrite(self,
+                source: str,
+                match: str,
+                rewrite: str,
+                args: Optional[Dict[str, str]] = None
+                ) -> str:
+        raise NotImplementedError
+
+    def substitute(self, template: str, args: Dict[str, str]) -> str:
+        raise NotImplementedError
