@@ -94,49 +94,29 @@ class LocationRange:
         return "{}::{}".format(self.start, self.stop)
 
 
+@attr.s(frozen=True, slots=True)
 class BoundTerm:
-    """Represents a binding of a named term to a fragment of source code."""
+    """Represents a binding of a named term to a fragment of source code.
+
+    Attributes
+    ----------
+    term: str
+        The name of the term.
+    location: LocationRange
+        The location range to which the term is bound.
+    fragment: str
+        The source code to which the term is bound.
+    """
+    term = attr.ib(type=str)
+    location = attr.ib(type=LocationRange)
+    fragment = attr.ib(type=str)
+
     @staticmethod
     def from_dict(d: Dict[str, Any]) -> 'BoundTerm':
         """Constructs a bound term from a dictionary-based description."""
         return BoundTerm(term=d['term'],
                          location=LocationRange.from_string(d['location']),
                          fragment=d['content'])
-
-    def __init__(self,
-                 term: str,
-                 location: LocationRange,
-                 fragment: str
-                 ) -> None:
-        """Constructs a new bound term.
-
-        Parameters:
-            term: the name of the term.
-            location: the location range at which the term was bound.
-            fragment: the source code to which the term was bound.
-        """
-        self.__term = term
-        self.__location = location
-        self.__fragment = fragment
-
-    def __repr__(self) -> str:
-        s = "comby.BoundTerm({}, {}, {})"
-        return s.format(self.term, str(self.location), self.fragment)
-
-    @property
-    def term(self) -> str:
-        """The name of the term."""
-        return self.__term
-
-    @property
-    def location(self) -> LocationRange:
-        """The location range covered by this term."""
-        return self.__location
-
-    @property
-    def fragment(self) -> str:
-        """The source code fragment to which this term is bound."""
-        return self.__fragment
 
 
 class Environment:
