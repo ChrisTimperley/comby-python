@@ -11,7 +11,7 @@ __all__ = (
     'Environment',
     'Match',
     'Client',
-    'RooibosException',
+    'CombyException',
     'ConnectionFailure',
     'ephemeral_server'
 )
@@ -32,11 +32,11 @@ logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
 
 
-class RooibosException(Exception):
-    """Base class used by all Rooibos exceptions."""
+class CombyException(Exception):
+    """Base class used by all Comby exceptions."""
 
 
-class ConnectionFailure(RooibosException):
+class ConnectionFailure(CombyException):
     """
     The client failed to establish a connection to the server within the
     allotted connection timeout window.
@@ -265,7 +265,7 @@ class Match:
 
 
 class Client:
-    """Provides an interface for communicating with a Rooibos server."""
+    """Provides an interface for communicating with a Comby server."""
     def __init__(self,
                  base_url: str,
                  timeout: int = 30,
@@ -274,11 +274,11 @@ class Client:
         """Constructs a new client.
 
         Parameters:
-            base_url: the base URL of the Rooibos server.
+            base_url: the base URL of the Comby server.
             timeout: the maximum number of seconds to wait before terminating
                 an unresponsive API request.
             timeout_connection: the maximum number of seconds to wait when
-                connecting to the Rooibos server before assuming that a
+                connecting to the Comby server before assuming that a
                 connection failure has occurred.
 
         Raises:
