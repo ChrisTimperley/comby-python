@@ -8,9 +8,11 @@ from typing import Iterator, Optional, Dict
 import logging
 import subprocess
 import shlex
+import json
 
 from .interface import CombyInterface
 from .core import Match
+from .exceptions import CombyBinaryError
 
 import attr
 
@@ -35,12 +37,19 @@ class CombyBinary(CombyInterface):
 
         cmd = (self.location, '-stdin', '-json-pretty', '-match-only',
                shlex.quote(template), 'foo')
+        cmd_s = ' '.join(cmd)
 
-        # FIXME avoid using shell
-        p = subprocess.run(c, stdout=subprocess.PIPE, shell=True,
+        logger.debug('calling comby: %s', cmd_s)
+        p = subprocess.run(cmd_s,
+                           stderr=subprocess.PIPE,
+                           stdout=subprocess.PIPE,
+                           shell=True,
                            input=source.encode('utf8'))
-        assert p.returncode == 0
-        jsn = json.loads(p.stdout.decode('utf8'))
+        out = p.stdout.decode('utf8')
+        if p.returncode != 0:
+            raise CombyBinaryError(p.returncode, p.stderr.decode('utf8'))
+
+        jsn = json.loads(out)
         print(jsn)
 
     def rewrite(self,
