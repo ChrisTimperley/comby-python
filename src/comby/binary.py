@@ -82,7 +82,10 @@ class CombyBinary(CombyInterface):
         jsn = json.loads(self.call(args_s, text=source))
         jsn = jsn['matches']
         for jsn_match in jsn:
-            print(match)
+            print(jsn_match)
+
+        # FIXME decode from JSON
+        yield from ()
 
     def rewrite(self,
                 source: str,
