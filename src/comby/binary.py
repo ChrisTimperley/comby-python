@@ -78,10 +78,16 @@ class CombyBinary(CombyInterface):
     def matches(self,
                 source: str,
                 template: str,
-                language: str
+                *,
+                language: Optional[str] = None
                 ) -> Iterator[Match]:
         logger.info("finding matches of template [%s] in source: %s",
                     template, source)
+        if language:
+            logger.info("using language override: %s", language)
+        else:
+            language = self.language
+            logger.info("using default language: %s", language)
 
         cmd = ('-stdin', '-json-pretty', '-match-only',
                shlex.quote(template), 'foo')
@@ -96,11 +102,19 @@ class CombyBinary(CombyInterface):
                 source: str,
                 match: str,
                 rewrite: str,
-                args: Optional[Dict[str, str]] = None
+                args: Optional[Dict[str, str]] = None,
+                *,
+                language: Optional[str] = None
                 ) -> str:
         logger.info("performing rewriting of source (%s) using match template "
                     "(%s), rewrite template (%s) and arguments (%s)",
                     source, match, rewrite, repr(args))
+        if language:
+            logger.info("using language override: %s", language)
+        else:
+            language = self.language
+            logger.info("using default language: %s", language)
+
         if args is None:
             args = {}
         if args:
@@ -112,5 +126,10 @@ class CombyBinary(CombyInterface):
 
         return self.call(cmd_s, text=source)
 
-    def substitute(self, template: str, args: Dict[str, str]) -> str:
+    def substitute(self,
+                   template: str,
+                   args: Dict[str, str],
+                   *,
+                   language: Optional[str] = None
+                   ) -> str:
         raise NotImplementedError
