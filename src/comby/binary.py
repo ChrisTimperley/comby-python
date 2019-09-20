@@ -28,8 +28,12 @@ class CombyBinary(CombyInterface):
     ----------
     location: str
         The location of the Comby binary that should be used.
+    language: str
+        The default language that should be assumed when dealing with source
+        text where no specific language is specified.
     """
     location = attr.ib(type=str, default='comby')
+    language = attr.ib(type=str, default='c')
 
     def call(self, args: str, text: Optional[str] = None) -> str:
         """Calls the Comby binary.
@@ -71,7 +75,11 @@ class CombyBinary(CombyInterface):
         logger.debug('raw output: %s', out)
         return out
 
-    def matches(self, source: str, template: str) -> Iterator[Match]:
+    def matches(self,
+                source: str,
+                template: str,
+                language: str
+                ) -> Iterator[Match]:
         logger.info("finding matches of template [%s] in source: %s",
                     template, source)
 

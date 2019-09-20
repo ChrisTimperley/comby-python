@@ -17,7 +17,7 @@ class CombyInterface(abc.ABC):
     ----------
     language: str
         The default language that should be assumed when dealing with source
-        text.
+        text where no specific language is specified.
     """
     @property
     @abc.abstractmethod
