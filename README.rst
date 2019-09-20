@@ -4,8 +4,8 @@ comby-python
 ============
 
 
-.. image:: https://travis-ci.org/ChrisTimperley/comby.svg?branch=master
-    :target: https://travis-ci.org/ChrisTimperley/comby
+.. image:: https://travis-ci.org/ChrisTimperley/comby-python.svg?branch=master
+    :target: https://travis-ci.org/ChrisTimperley/comby-python
 
 .. image:: https://badge.fury.io/py/comby.svg
     :target: https://badge.fury.io/py/comby
