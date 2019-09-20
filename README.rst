@@ -1,4 +1,4 @@
-. -*-restructuredtext-*-
+.. -*-restructuredtext-*-
 
 comby-python
 ============
