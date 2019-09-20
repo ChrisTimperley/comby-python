@@ -56,22 +56,21 @@ class CombyBinary(CombyInterface):
             if the binary produces a non-zero return code.
         """
         logger.debug('calling comby with args: %s', args)
-        inp = None
         if text:
             logger.debug('supplying input text: %s', text)
-            inp = text.encode('utf8')
 
         cmd_s = '{} {}'.format(self.location, args)
         p = subprocess.run(cmd_s,
+                           encoding='utf8',
                            shell=True,
                            stderr=subprocess.PIPE,
                            stdout=subprocess.PIPE,
-                           input=inp)
+                           input=text)
 
         if p.returncode != 0:
-            raise CombyBinaryError(p.returncode, p.stderr.decode('utf8'))
+            raise CombyBinaryError(p.returncode, p.stderr)
 
-        out = p.stdout.decode('utf8')
+        out = p.stdout
         logger.debug('raw output: %s', out)
         return out
 
@@ -90,6 +89,7 @@ class CombyBinary(CombyInterface):
             logger.info("using default language: %s", language)
 
         cmd = ('-stdin', '-json-pretty', '-match-only',
+               '-matcher', shlex.quote(language),
                shlex.quote(template), 'foo')
         cmd_s = ' '.join(cmd)
 
@@ -121,7 +121,7 @@ class CombyBinary(CombyInterface):
             raise NotImplementedError("args are not currently supported")
 
         cmd = ['-stdin', shlex.quote(match), shlex.quote(rewrite)]
-        cmd += ['-stdout']
+        cmd += ['-stdout', '-matcher', shlex.quote(language)]
         cmd_s = ' '.join(cmd)
 
         return self.call(cmd_s, text=source)
