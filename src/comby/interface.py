@@ -67,7 +67,7 @@ class CombyInterface(abc.ABC):
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None,
                 *,
-                language; Optional[str] = None
+                language: Optional[str] = None
                 ) -> str:
         """
         Rewrites all matches of a template in a source text using a rewrite
