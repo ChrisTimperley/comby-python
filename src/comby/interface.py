@@ -12,7 +12,7 @@ from .core import Match
 
 class CombyInterface(abc.ABC):
     """Provides a standard interface for interacting with Comby.
-    
+
     Attributes
     ----------
     language: str
