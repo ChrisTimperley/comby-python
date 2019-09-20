@@ -24,6 +24,29 @@ def test_rewrite():
     actual = comby.rewrite(source, template, rewrite)
     assert actual == expected
 
+    source = """
+    switch (name) {
+        case "WALL-E":
+            System.out.println("Hey! Stop that droid!");
+            break;
+        default:
+            System.out.println("These aren't the droids we're looking for...");
+    }
+    """.strip()
+    template = 'case "WALL-E"'
+    rewrite = 'case "C3PO"'
+    expected = """
+    switch (name) {
+        case "C3PO":
+            System.out.println("Hey! Stop that droid!");
+            break;
+        default:
+            System.out.println("These aren't the droids we're looking for...");
+    }
+    """.strip()
+    actual = comby.rewrite(source, template, rewrite, language='.java')
+    assert actual == expected
+
 
 if __name__ == '__main__':
     logging.basicConfig()
