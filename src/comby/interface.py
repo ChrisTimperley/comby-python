@@ -11,7 +11,19 @@ from .core import Match
 
 
 class CombyInterface(abc.ABC):
-    """Provides a standard interface for interacting with Comby."""
+    """Provides a standard interface for interacting with Comby.
+    
+    Attributes
+    ----------
+    language: str
+        The default language that should be assumed when dealing with source
+        text.
+    """
+    @property
+    @abc.abstractmethod
+    def language(self) -> str:
+        ...
+
     @abc.abstractmethod
     def matches(self,
                 source: str,
