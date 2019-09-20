@@ -56,21 +56,22 @@ class CombyBinary(CombyInterface):
             if the binary produces a non-zero return code.
         """
         logger.debug('calling comby with args: %s', args)
+        input_ = None
         if text:
+            input_ = text.encode('utf8')
             logger.debug('supplying input text: %s', text)
 
         cmd_s = '{} {}'.format(self.location, args)
         p = subprocess.run(cmd_s,
-                           encoding='utf8',
                            shell=True,
                            stderr=subprocess.PIPE,
                            stdout=subprocess.PIPE,
-                           input=text)
+                           input=input_)
 
         if p.returncode != 0:
-            raise CombyBinaryError(p.returncode, p.stderr)
+            raise CombyBinaryError(p.returncode, p.stderr.decode('utf8'))
 
-        out = p.stdout
+        out = p.stdout.decode('utf8')
         logger.debug('raw output: %s', out)
         return out
 
