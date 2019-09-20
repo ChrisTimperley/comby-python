@@ -33,7 +33,7 @@ class CombyBinary(CombyInterface):
         text where no specific language is specified.
     """
     location = attr.ib(type=str, default='comby')
-    language = attr.ib(type=str, default='c')
+    language = attr.ib(type=str, default='.c')
 
     def call(self, args: str, text: Optional[str] = None) -> str:
         """Calls the Comby binary.
