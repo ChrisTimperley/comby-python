@@ -15,10 +15,17 @@ class CombyInterface(abc.ABC):
 
     Attributes
     ----------
+    version: str
+        The version of Comby that is provided by this interface.
     language: str
         The default language that should be assumed when dealing with source
         text where no specific language is specified.
     """
+    @property
+    @abc.abstractmethod
+    def version(self) -> str:
+        ...
+
     @property
     @abc.abstractmethod
     def language(self) -> str:

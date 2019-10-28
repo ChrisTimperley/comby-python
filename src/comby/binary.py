@@ -31,9 +31,15 @@ class CombyBinary(CombyInterface):
     language: str
         The default language that should be assumed when dealing with source
         text where no specific language is specified.
+    version: str
+        The version of Comby that is used by this binary.
     """
     location = attr.ib(type=str, default='comby')
     language = attr.ib(type=str, default='.c')
+
+    @property
+    def version(self) -> str:
+        return self.call('-version').strip()
 
     def call(self, args: str, text: Optional[str] = None) -> str:
         """Calls the Comby binary.
