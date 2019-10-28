@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
 
 
-@attr.s(frozen=True)
+@attr.s(frozen=True, slots=True)
 class CombyBinary(CombyInterface):
     """Provides an interface to the Comby binary.
 
