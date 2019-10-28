@@ -95,7 +95,7 @@ class CombyBinary(CombyInterface):
             language = self.language
             logger.info("using default language: %s", language)
 
-        cmd = ('-stdin', '-json-pretty', '-match-only',
+        cmd = ('-stdin', '-json-lines', '-match-only',
                '-matcher', shlex.quote(language),
                shlex.quote(template), 'foo')
         cmd_s = ' '.join(cmd)
