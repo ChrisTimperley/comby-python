@@ -74,6 +74,7 @@ class CombyInterface(abc.ABC):
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None,
                 *,
+                diff: bool = False,
                 language: Optional[str] = None
                 ) -> str:
         """

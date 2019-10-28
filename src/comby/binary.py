@@ -111,6 +111,7 @@ class CombyBinary(CombyInterface):
                 rewrite: str,
                 args: Optional[Dict[str, str]] = None,
                 *,
+                diff: bool = False,
                 language: Optional[str] = None
                 ) -> str:
         logger.info("performing rewriting of source (%s) using match template "
@@ -128,7 +129,8 @@ class CombyBinary(CombyInterface):
             raise NotImplementedError("args are not currently supported")
 
         cmd = ['-stdin', shlex.quote(match), shlex.quote(rewrite)]
-        cmd += ['-stdout', '-matcher', shlex.quote(language)]
+        cmd += ['-matcher', shlex.quote(language)]
+        cmd += ['-diff' if diff else '-stdout']
         cmd_s = ' '.join(cmd)
 
         return self.call(cmd_s, text=source)
