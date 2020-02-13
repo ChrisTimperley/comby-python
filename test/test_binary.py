@@ -6,8 +6,12 @@ import pytest
 from comby import CombyBinary
 
 
-def test_match():
-    comby = CombyBinary()
+@pytest.fixture
+def comby():
+    return CombyBinary()
+
+
+def test_match(comby):
     source = "print('hello world')"
     template = "print(:[1])"
     matches = list(comby.matches(source, template))
@@ -15,8 +19,7 @@ def test_match():
     print(matches[0])
 
 
-def test_rewrite():
-    comby = CombyBinary()
+def test_rewrite(comby):
     source = "print('hello world')"
     template = "print(:[1])"
     rewrite = "println(:[1])"
@@ -48,6 +51,9 @@ def test_rewrite():
     assert actual == expected
 
 
-if __name__ == '__main__':
-    logging.basicConfig()
-    test_rewrite()
+def test_substitute(comby):
+    template = "my name is :[1]"
+    args = {'1': 'very secret'}
+    expected = 'my name is very secret'
+    actual = comby.substitute(template, args)
+    assert actual == expected

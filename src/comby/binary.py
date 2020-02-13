@@ -5,16 +5,20 @@ This module implements an binary-based interface for communicating with Comby.
 __all__ = ('CombyBinary',)
 
 from typing import Iterator, Optional, Dict
+import json
 import logging
+import os
 import subprocess
 import shlex
-import json
 
-from .interface import CombyInterface
 from .core import Match
 from .exceptions import CombyBinaryError
+from .interface import CombyInterface
 
 import attr
+
+_LINE_SEPARATOR = os.linesep
+_LINE_SEPARATOR_LENGTH = len(_LINE_SEPARATOR)
 
 logger = logging.getLogger(__name__)  # type: logging.Logger
 logger.setLevel(logging.DEBUG)
@@ -141,4 +145,27 @@ class CombyBinary(CombyInterface):
                    *,
                    language: Optional[str] = None
                    ) -> str:
-        raise NotImplementedError
+        logger.info(f"performing substitution of arguments ({args}) "
+                    f"into template ({template})")
+        if language:
+            logger.info("using language override: %s", language)
+        else:
+            language = self.language
+            logger.info("using default language: %s", language)
+
+        substitutions = [{'variable': variable, 'value': value}
+                         for (variable, value) in args.items()]
+        encoded_substitutions = shlex.quote(json.dumps(substitutions))
+        logger.debug(f"encoded substitutions: {encoded_substitutions}")
+
+        cmd = ('IGNORE_MATCHED_TEMPLATE', shlex.quote(template),
+               '-matcher', shlex.quote(language),
+               '-substitute-only', encoded_substitutions)
+        cmd_string = ' '.join(cmd)
+        result = self.call(cmd_string)
+
+        # remove any trailing line separator
+        if result.endswith(_LINE_SEPARATOR):
+            result = result[:-_LINE_SEPARATOR_LENGTH]
+
+        return result
