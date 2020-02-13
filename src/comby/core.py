@@ -11,8 +11,7 @@ __all__ = (
     'Match'
 )
 
-from typing import (Dict, Tuple, Iterator, List, Any, Optional, Mapping,
-                    Sequence)
+from typing import Dict, Iterator, Any, Mapping, Sequence
 
 import attr
 
@@ -125,7 +124,7 @@ class Environment(Mapping[str, BoundTerm]):
         return self.__bindings[term]
 
 
-@attr.s(slots=True)
+@attr.s(slots=True, frozen=True)
 class Match(Mapping[str, BoundTerm]):
     """
     Describes a single match of a given template in a source text as a mapping

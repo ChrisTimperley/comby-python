@@ -6,10 +6,10 @@ python:
 - '3.5'
 - '3.6'
 install:
-- pip install mypy pycodestyle
+- pip install -r requirements.dev.txt
 - pip install .
 script:
-- pycodestyle src
+- flake8 src
 - mypy src --ignore-missing-imports
 notifications:
   email: false
