@@ -9,8 +9,7 @@ install:
 - pip install -r requirements.dev.txt
 - pip install .
 script:
-- flake8 src
-- mypy src
+- tox
 notifications:
   email: false
 deploy:
