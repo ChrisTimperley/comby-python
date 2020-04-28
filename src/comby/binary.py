@@ -75,11 +75,13 @@ class CombyBinary(CombyInterface):
                            stdout=subprocess.PIPE,
                            input=input_)
 
-        if p.returncode != 0:
-            raise CombyBinaryError(p.returncode, p.stderr.decode('utf8'))
-
+        err = p.stderr.decode('utf8')
         out = p.stdout.decode('utf8')
-        logger.debug(f'raw output: {out}')
+        logger.debug(f'stderr: {err}')
+        logger.debug(f'stdout: {out}')
+
+        if p.returncode != 0:
+            raise CombyBinaryError(p.returncode, err)
         return out
 
     def matches(self,
