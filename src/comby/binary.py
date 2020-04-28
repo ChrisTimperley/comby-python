@@ -6,22 +6,19 @@ __all__ = ('CombyBinary',)
 
 from typing import Iterator, Optional, Dict
 import json
-import logging
 import os
 import subprocess
 import shlex
+
+from loguru import logger
+import attr
 
 from .core import Match
 from .exceptions import CombyBinaryError
 from .interface import CombyInterface
 
-import attr
-
 _LINE_SEPARATOR = os.linesep
 _LINE_SEPARATOR_LENGTH = len(_LINE_SEPARATOR)
-
-logger = logging.getLogger(__name__)  # type: logging.Logger
-logger.setLevel(logging.DEBUG)
 
 
 @attr.s(frozen=True, slots=True)
@@ -65,13 +62,13 @@ class CombyBinary(CombyInterface):
         CombyBinaryError
             if the binary produces a non-zero return code.
         """
-        logger.debug('calling comby with args: %s', args)
+        logger.debug(f'calling comby with args: {args}')
         input_ = None
         if text:
             input_ = text.encode('utf8')
-            logger.debug('supplying input text: %s', text)
+            logger.debug(f'supplying input text: {text}')
 
-        cmd_s = '{} {}'.format(self.location, args)
+        cmd_s = f'{self.location} {args}'
         p = subprocess.run(cmd_s,
                            shell=True,
                            stderr=subprocess.PIPE,
@@ -82,7 +79,7 @@ class CombyBinary(CombyInterface):
             raise CombyBinaryError(p.returncode, p.stderr.decode('utf8'))
 
         out = p.stdout.decode('utf8')
-        logger.debug('raw output: %s', out)
+        logger.debug(f'raw output: {out}')
         return out
 
     def matches(self,
@@ -91,13 +88,13 @@ class CombyBinary(CombyInterface):
                 *,
                 language: Optional[str] = None
                 ) -> Iterator[Match]:
-        logger.info("finding matches of template [%s] in source: %s",
-                    template, source)
+        logger.info(f"finding matches of template [{template}] "
+                    f"in source: {source}")
         if language:
-            logger.info("using language override: %s", language)
+            logger.info(f"using language override: {language}")
         else:
             language = self.language
-            logger.info("using default language: %s", language)
+            logger.info(f"using default language: {language}")
 
         cmd = ('-stdin', '-json-lines', '-match-only',
                '-matcher', shlex.quote(language),
@@ -118,14 +115,14 @@ class CombyBinary(CombyInterface):
                 diff: bool = False,
                 language: Optional[str] = None
                 ) -> str:
-        logger.info("performing rewriting of source (%s) using match template "
-                    "(%s), rewrite template (%s) and arguments (%s)",
-                    source, match, rewrite, repr(args))
+        logger.info(f"performing rewriting of source ({source}) using match "
+                    f"template ({match}), rewrite template ({rewrite}), "
+                    f"and arguments ({repr(args)})")
         if language:
-            logger.info("using language override: %s", language)
+            logger.info(f"using language override: {language}")
         else:
             language = self.language
-            logger.info("using default language: %s", language)
+            logger.info(f"using default language: {language}")
 
         if args is None:
             args = {}
@@ -148,10 +145,10 @@ class CombyBinary(CombyInterface):
         logger.info(f"performing substitution of arguments ({args}) "
                     f"into template ({template})")
         if language:
-            logger.info("using language override: %s", language)
+            logger.info(f"using language override: {language}")
         else:
             language = self.language
-            logger.info("using default language: %s", language)
+            logger.info(f"using default language: {language}")
 
         substitutions = [{'variable': variable, 'value': value}
                          for (variable, value) in args.items()]
