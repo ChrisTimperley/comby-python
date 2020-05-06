@@ -3,8 +3,8 @@ sudo: required
 services:
 - docker
 python:
-- '3.5'
 - '3.6'
+- '3.7'
 install:
 - pip install -r requirements.dev.txt
 - pip install .
@@ -17,6 +17,6 @@ deploy:
     user: ChrisTimperley
     on:
       tags: true
-      python: 3.5
+      python: 3.6
     password:
       secure: DRaJkyVgjaZwu1qHMTIn5fP4uwSpd94JFHL8j5/mKzP8dVWNRHXlYVqDkoYxOx//PYSatb76thDX0jETHJ3xqrnRymBick+PN5Ak+mzJ2iP75d5ELHdSJZmNYo2UqTEip8VOlOic6722w53pO37zDqAfuk3Qs70x9nVS0SOz4KFymIfcMjrajruPL7+cSu79mlbn5xuKV9sPl+JM4UF0X/EwPd1KURjIoRXH3BBj98mfjgrx/5kjIbtuh80fPPh9JHgx2T/dMEZMMHANgtfarCXvMJ0eDv9UbWo6u/Y/Pl1/rxS51y7Bu8okudQUXc2N9CZxKJmGpZNnX0tU+vzIRXvuKV13ok1JmLdxdRl+wNOih6jZHiDjPOhyAFrMVrnK2Ho8t+nsp+y9IYLKcC/LOIbB+sE0FpJ/DWwaw2KTGfDnBafnoeb/MO80e1VOgEA+x/0CmTzqUUFpP3X6TKSUVcLAEyoLlvhu948OCuQD6MJmFK1BH261COmGscB4QwI6yWq9qIjsQjF62PApUrokWS+YN48JEIu633D8wzPObv/xaOyRlwhkscu/lSLXXX9UYzGCr56mu9hZSkUheAPN4pkE+4TeCwWGzWKATIABJR8ZEhuve0VjV7SBdWrD2mbK55KKKsB7UXzpe5niRZP6GlkjjDS20gAZdud+UT86HR0=
