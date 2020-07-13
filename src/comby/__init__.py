@@ -11,6 +11,6 @@ from .binary import CombyBinary
 
 Comby = CombyBinary
 
-__version__ = '0.0.1'
+__version__ = '0.0.2'
 
 _logger.disable('comby')
