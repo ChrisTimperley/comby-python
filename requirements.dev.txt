@@ -1,5 +1,5 @@
-flake8==3.7.9
-mypy==0.740
-pytest==5.3.0
-ptpython==2.0.6
-tox==3.14.1
+flake8==3.8.4
+mypy==0.790
+pytest==6.1.2
+ptpython==3.0.7
+tox==3.20.1
