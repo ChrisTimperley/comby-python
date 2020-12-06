@@ -5,8 +5,10 @@ services:
 python:
 - '3.6'
 - '3.7'
+before_install:
+- sudo apt-get install -y libpcre3-dev
 install:
-- apt-get install libpcre3-dev && bash <(curl -sL get.comby.dev)
+- bash <(curl -sL get.comby.dev)
 - pip install -r requirements.dev.txt
 - pip install .
 script:
