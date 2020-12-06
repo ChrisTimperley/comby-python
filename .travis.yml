@@ -11,6 +11,7 @@ before_install:
 install:
 - bash <(curl -sL get.comby.dev)
 - pip install -r requirements.dev.txt
+- pip install tox-travis==0.12
 - pip install .
 script:
 - tox
