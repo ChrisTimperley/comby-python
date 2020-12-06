@@ -6,6 +6,7 @@ python:
 - '3.6'
 - '3.7'
 install:
+- bash <(curl -sL get.comby.dev)
 - pip install -r requirements.dev.txt
 - pip install .
 script:
