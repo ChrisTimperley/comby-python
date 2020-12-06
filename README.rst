@@ -25,7 +25,7 @@ To install the latest release from PyPI:
 
 .. code:: shell
 
-   $ pip install comby 
+   $ pip install comby
 
 or to install from source:
 
