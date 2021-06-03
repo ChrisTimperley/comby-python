@@ -103,10 +103,11 @@ class CombyBinary(CombyInterface):
                shlex.quote(template), 'foo')
         cmd_s = ' '.join(cmd)
 
-        jsn = json.loads(self.call(cmd_s, text=source))
-        jsn = jsn['matches']
-        for jsn_match in jsn:
-            yield Match.from_dict(jsn_match)
+        jsn = json.loads(self.call(cmd_s, text=source) or 'null')
+        if jsn is not None:
+            jsn = jsn['matches']
+            for jsn_match in jsn:
+                yield Match.from_dict(jsn_match)
 
     def rewrite(self,
                 source: str,
