@@ -7,7 +7,7 @@ python:
 - '3.6'
 - '3.7'
 before_install:
-- sudo apt-get install -y libpcre3-dev
+- sudo apt-get install -y libev4 libpcre3-dev
 install:
 - bash <(curl -sL get.comby.dev)
 - pip install -r requirements.dev.txt
