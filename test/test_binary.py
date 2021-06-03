@@ -18,6 +18,12 @@ def test_match(comby):
     assert len(matches) == 1
     print(matches[0])
 
+def test_no_match(comby):
+    source = "foo"
+    template = "bar"
+    matches = list(comby.matches(source, template))
+    print(matches)
+    assert len(matches) == 0
 
 def test_rewrite(comby):
     source = "print('hello world')"
