@@ -3,9 +3,6 @@
 
 .mypy_cache
 
-Pipfile
-Pipfile.lock
-
 .pytest_cache
 env
 
