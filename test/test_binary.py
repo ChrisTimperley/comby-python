@@ -11,6 +11,20 @@ def comby():
     return CombyBinary()
 
 
+def test_backslash_escapes_issue_32(comby):
+    source = " if \'charset\' in response.headers.get(\"Content-Type\", \"\")\n"
+    lhs = ":[ spaces]:[a]:[newline~[\n]]"
+    rhs = ":[spaces]:[a]:[newline]:[spaces]break;:[newline]"
+    matches = list(comby.matches(source, lhs, language=".py"))
+    assert len(matches) == 1
+    match = matches[0]
+
+    environment = {entry: match[entry].fragment for entry in match.environment}
+    mutated = comby.substitute(rhs, environment)
+    expected = " if 'charset' in response.headers.get(\"Content-Type\", \"\")\n break;\n"
+    assert mutated == expected
+
+
 def test_match(comby):
     source = "print('hello world')"
     template = "print(:[1])"
@@ -18,12 +32,14 @@ def test_match(comby):
     assert len(matches) == 1
     print(matches[0])
 
+
 def test_no_match(comby):
     source = "foo"
     template = "bar"
     matches = list(comby.matches(source, template))
     print(matches)
     assert len(matches) == 0
+
 
 def test_rewrite(comby):
     source = "print('hello world')"
