@@ -37,6 +37,7 @@ class CombyBinary(CombyInterface):
     """
     location = attr.ib(type=str, default='comby')
     language = attr.ib(type=str, default='.c')
+    timeout: Optional[int] = 60
 
     @property
     def version(self) -> str:
@@ -68,6 +69,9 @@ class CombyBinary(CombyInterface):
             input_ = text.encode('utf8')
             logger.debug(f'supplying input text: {text}')
 
+        if self.timeout is not None:
+            args += f' -timeout {self.timeout}'
+            
         cmd_s = f'{self.location} {args}'
         p = subprocess.run(cmd_s,
                            shell=True,
