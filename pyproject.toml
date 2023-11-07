@@ -1,0 +1,260 @@
+[tool.poetry]
+name = "comby"
+version = "0.0.4"
+description = "Lightweight language-independent syntax rewriting."
+authors = ["Christopher Timperley <christimperley@googlemail.com>"]
+license = "MIT"
+readme = "README.rst"
+repository = "https://github.com/ChrisTimperley/comby-python"
+classifiers = [
+    "Natural Language :: English",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Typing :: Typed",
+    # Include this classifier to prevent accidently publishing private code to PyPI.
+    #   https://pypi.org/classifiers/
+    "Private :: Do Not Upload",
+]
+
+[tool.poetry.dependencies]
+python = "^3.9, <3.13"
+loguru = "^0.7.2"
+attrs = "^23.1.0"
+
+[tool.poetry.group.nox.dependencies]
+nox-poetry = ">=1.0.3"
+
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+pytest-cov = "*"
+pytest-randomly = "*"
+
+[tool.poetry.group.type_check.dependencies]
+mypy = "*"
+typeguard = ">=4.1.5"
+pydantic = ">=2.4.2"
+[tool.poetry.group.lint.dependencies]
+ruff = "*"
+Flake8-pyproject = "*"
+flake8 = "*"
+pylint = "*"
+
+dlint = ">=0.14.1"
+flake8-aaa = ">=0.17.0"
+flake8-absolute-import = ">=1.0.0.2"
+flake8-annotations = ">=3.0.1"
+flake8-annotations-complexity = ">=0.0.8"
+flake8-annotations-coverage = ">=0.0.6"
+flake8-black = ">=0.3.6"
+flake8-broken-line = ">=1.0.0"
+flake8-class-attributes-order = ">=0.1.3"
+flake8-cognitive-complexity = ">=0.1.0"
+flake8-cohesion = ">=1.0.1"
+flake8-comprehensions = ">=3.14.0"
+flake8-deprecated = ">=2.1.0"
+flake8-docstrings = ">=1.7.0"
+flake8-dunder-all = ">=0.3.0"
+flake8-eradicate = ">=1.5.0"
+flake8-expression-complexity = ">=0.0.11"
+flake8-fixme = ">=1.1.1"
+flake8-functions = ">=0.0.8"
+flake8-functions-names = ">=0.4.0"
+flake8-future-annotations = ">=1.1.0"
+flake8-markdown = ">=0.5.0"
+flake8-mutable = ">=1.2.0"
+flake8-newspaper-style = ">=0.4.3"
+flake8-no-implicit-concat = ">=0.3.4"
+flake8-print = ">=5.0.0"
+flake8-printf-formatting = ">=1.1.2"
+flake8-pylint = ">=0.2.1"
+flake8-pytest-style = ">=1.7.2"
+flake8-quotes = ">=3.3.2"
+flake8-rst-docstrings = ">=0.3.0"
+flake8-scrapy = ">=0.0.1"
+flake8-secure-coding-standard = ">=1.4.0"
+flake8-string-format = ">=0.3.0"
+flake8-todos = ">=0.3.0"
+flake8-tuple = ">=0.4.1"
+flake8-typing-imports = ">=1.15.0"
+flake8-unused-arguments = ">=0.0.13"
+flake8-use-fstring = ">=1.4"
+flake8-use-pathlib = ">=0.3.0"
+flake8-variables-names = ">=0.0.6"
+flake8-warnings = ">=0.4.1"
+mccabe = ">=0.7.0"
+tryceratops = ">=2.3.2"
+types-flake8-2020 = ">=1.8.0.1"
+types-flake8-builtins = ">=2.1.0.3"
+
+python-typing-update = ">=0.6.0"
+
+
+[tool.poetry.group.fmt.dependencies]
+black = "*"
+docformatter = ">=1.7.5"
+pyment = { git = "https://github.com/dadadel/pyment.git" }
+
+[tool.poetry.group.docs.dependencies]
+mkdocs-material = "*"
+mkdocs-htmlproofer-plugin = "*"
+mkdocstrings = { version = "*", extras = ["python"] }
+mkdocs-gen-files = "*"
+mkdocs-literate-nav = "*"
+
+[tool.mypy]
+ignore_missing_imports = true
+strict = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+preview = true
+extend-select = [
+    "F",     # Pyflakes
+    "E",     # pycodestyle
+    "W",     # Warning
+    "E",     # Error
+    "C90",   # mccabe
+    "I",     # isort
+    "N",     # pep8-naming
+    "D",     # pydocstyle
+    "UP",    # pyupgrade
+    "YTT",   # flake8-2020
+    "ANN",   # flake8-annotations
+    "ASYNC", # flake8-async
+    "S",     # flake8-bandit
+    "BLE",   # flake8-blind-except
+    "FBT",   # flake8-boolean-trap
+    "B",     # flake8-bugbear
+    "A",     # flake8-builtins
+    # "COM",   # flake8-commas
+    # "CPY",  # flake8-copyright
+    "C4",   # flake8-comprehensions
+    "DTZ",  # flake8-datetimez
+    "T10",  # flake8-debugger
+    "DJ",   # flake8-django
+    "EM",   # flake8-errmsg
+    "EXE",  # flake8-executable
+    "FA",   # flake8-future-annotations
+    "ISC",  # flake8-implicit-str-concat
+    "ICN",  # flake8-import-conventions
+    "G",    # flake8-logging-format
+    "INP",  # flake8-no-pep420
+    "PIE",  # flake8-pie
+    "T20",  # flake8-print
+    "PYI",  # flake8-pyi
+    "PT",   # flake8-pytest-style
+    "Q",    # flake8-quotes
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SLF",  # flake8-self
+    "SLOT", # flake8-slots
+    "SIM",  # flake8-simplify
+    "TID",  # flake8-tidy-imports
+    "TCH",  # flake8-type-checking
+    "INT",  # flake8-gettext
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "TD",   # flake8-todos
+    "FIX",  #flake8-fixme
+    'ERA',  # eradicate
+    'PD',   # pandas-vet
+    'PGH',  # pygrep-hooks
+    'PL',   # Pylint
+    'TRY',  # tryceratops
+    # 'FLY',  # flynt
+    'NPY',  # NumPy-specific rules
+    'AIR',  # Airflow
+    'PERF', # Perflint
+    'FURB', # refurb
+    'LOG',  #flake8-logging
+    'RUF',  # Ruff-specific rules
+]
+extend-ignore = [
+    "RUF005",
+    "D200",   # One-line docstring should fit on one line with quotes
+    "D212",   # Multi-line docstring summary should start at the first line
+    "D410",   # Missing blank line after section
+    "D411",   # Missing blank line before section
+    "Q000",   # Double quotes found but single quotes preferred
+]
+src = ["src"]
+
+[tool.ruff.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.flake8-bugbear]
+extend-immutable-calls = ["typer.Argument"]
+
+[tool.ruff.isort]
+force-sort-within-sections = false
+split-on-trailing-comma = true
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+
+[tool.ruff.per-file-ignores]
+"docs/gen_ref_pages.py" = ["INP001", "PGH003"]
+"src/comby/core.py" = ["A003"]
+"src/comby/binary.py" = ["PLR0913", "S602"]
+"src/comby/interface.py" = ["PLR0913"]
+"**/test_*.py" = ["S101", "E501"]
+"noxfile.py" = ["PIE800"]
+[tool.flake8]
+max-line-length = 100
+docstring-convention = "google"
+
+extend-exclude = ["venv", ".venv", "build"]
+skip-overridden-methods = true
+unused-arguments-ignore-abstract-functions = true
+unused-arguments-ignore-overload-functions = true
+unused-arguments-ignore-override-functions = true
+unused-arguments-ignore-stub-functions = true
+unused-arguments-ignore-variadic-names = true
+unused-arguments-ignore-lambdas = true
+
+ignore = [
+    "D200",   # One-line docstring should fit on one line with quotes
+    "D212",   # Multi-line docstring summary should start at the first line
+    "D410",   # Missing blank line after section
+    "D411",   # Missing blank line before section
+    "FNE002", # The method has a @property decorator, but has a verb in it's name (version
+    "RST203", # Definition list ends without a blank line; unexpected unindent.
+    "RST213", # Inline emphasis start-string without end-string.
+    "TYP001", # guard import by `if False:  # TYPE_CHECKING`: override
+    "PLW301", # Unnecessary ellipsis constant (unnecessary-ellipsis)
+    "Q000",   # Double quotes found but single quotes preferred
+]
+
+per-file-ignores = [
+    "test_*.py: D103 DALL000 E501 PLC301 PLC116 PLW621 S101 SCS108",
+    "core.py: PLR903 VNE003",
+    "binary.py: CFQ002 PLR913 DUO116 SCS103 PLR914 CCR001 H601",
+    "interface.py: CFQ002 PLR913",
+    "noxfile.py: PIE800",
+]
+[tool.pylint]
+max-line-length = 100
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311", "py312"]
+
+[tool.pytest.ini_options]
+addopts = ["--strict-config", "--strict-markers"]
+xfail_strict = true
+filterwarnings = [
+    "error",
+]
+
+[tool.coverage.run]
+branch = true
