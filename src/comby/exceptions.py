@@ -1,31 +1,29 @@
-# -*- coding: utf-8 -*-
-"""
-This module provides definitions for the exceptions raised by Comby.
-"""
+"""This module provides definitions for the exceptions raised by Comby."""
 import attr
 
+__all__ = ["CombyExceptionError", "ConnectionFailureError"]
 
-class CombyException(Exception):
+
+class CombyExceptionError(Exception):
     """Base class used by all Comby exceptions."""
 
 
-class ConnectionFailure(CombyException):
+class ConnectionFailureError(CombyExceptionError):
     """
-    The client failed to establish a connection to the server within the
-    allotted connection timeout window.
+    The client failed to establish a connection to the server.
+
+    The client failed to establish a connection to the server within the allotted
+    connection timeout window.
+
+
+    :raises ConnectionFailureError: always
+
     """
 
 
-@attr.s(auto_exc=True)
-class CombyBinaryError(CombyException):
-    """An error was produced by the Comby binary.
+@attr.s(auto_attribs=True)
+class CombyBinaryError(CombyExceptionError):
+    """An error was produced by the Comby binary."""
 
-    Attributes
-    ----------
     code: int
-        The exit code that was produced by the binary.
     message: str
-        The error message that was produced by the binary.
-    """
-    code = attr.ib(type=int)
-    message = attr.ib(type=str)

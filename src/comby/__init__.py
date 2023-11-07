@@ -1,16 +1,28 @@
-# -*- coding: utf-8 -*-
 """
-This package provides a set of Python bindings for Comby, a general purpose
-tool for matching and rewriting code in arbitrary languages.
+Python bindings for Comby.
+
+This package provides a set of Python bindings for Comby, a general purpose tool for
+matching and rewriting code in arbitrary languages.
+
 """
 from loguru import logger as _logger
 
-from . import exceptions
-from .core import Location, LocationRange, BoundTerm, Environment, Match
-from .binary import CombyBinary
+from comby import exceptions
+from comby.binary import CombyBinary
+from comby.core import BoundTerm, Environment, Location, LocationRange, Match
 
 Comby = CombyBinary
 
-__version__ = '0.0.2'
+__version__ = "0.0.2"
 
-_logger.disable('comby')
+_logger.disable("comby")
+
+__all__ = [
+    "exceptions",
+    "Location",
+    "LocationRange",
+    "BoundTerm",
+    "Environment",
+    "Match",
+    "CombyBinary",
+]
